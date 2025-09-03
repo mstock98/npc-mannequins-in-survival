@@ -1,0 +1,9 @@
+name: NMIS
+version: '1.0-SNAPSHOT'
+main: org.ferroh.nMIS.NMIS
+api-version: '1.21'
+prefix: NMIS
+load: STARTUP
+authors: [ Ferroh ]
+description: A Spigot/Paper plugin allowing for the new Mannequins to be used in survival
+website: https://github.com/mstock98/npc-mannequins-in-survival
