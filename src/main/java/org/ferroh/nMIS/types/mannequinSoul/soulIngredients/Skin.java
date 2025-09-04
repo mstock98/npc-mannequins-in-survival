@@ -1,4 +1,4 @@
-package org.ferroh.nMIS.types.soulIngredients;
+package org.ferroh.nMIS.types.mannequinSoul.soulIngredients;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -8,19 +8,23 @@ public class Skin extends SoulIngredient {
     private String _username;
     private ItemStack _itemStack;
 
+    public Skin(String skinUsername) {
+        _username = skinUsername;
+    }
+
     public Skin(ItemStack potentialSkinItem) {
         if (potentialSkinItem == null) {
-            throw new IllegalStateException("ItemStack is null");
+            throw new IllegalArgumentException("ItemStack is null");
         }
 
         if (!matchesIngredientMaterial(potentialSkinItem)) {
-            throw new IllegalStateException("Wrong material");
+            throw new IllegalArgumentException("Wrong material");
         }
 
         String username = ItemHelper.getDisplayName(potentialSkinItem);
 
         if (username == null) {
-            throw new IllegalStateException("Skin username is null");
+            throw new IllegalArgumentException("Skin username is null");
         }
 
         _username = username;
@@ -40,5 +44,9 @@ public class Skin extends SoulIngredient {
         }
 
         return _itemStack;
+    }
+
+    public String getUsername() {
+        return _username;
     }
 }

@@ -1,4 +1,4 @@
-package org.ferroh.nMIS.types.soulIngredients;
+package org.ferroh.nMIS.types.mannequinSoul.soulIngredients;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +25,7 @@ public class SoulStarter extends SoulIngredient {
             throw new IllegalArgumentException("Soul starter material is wrong");
         }
 
-        ItemMeta meta = potentialSoulStarterItem.getItemMeta();
+        ItemMeta meta = ItemHelper.getItemMeta(potentialSoulStarterItem);
 
         if (meta == null) {
             throw new IllegalArgumentException("Could not get item meta");

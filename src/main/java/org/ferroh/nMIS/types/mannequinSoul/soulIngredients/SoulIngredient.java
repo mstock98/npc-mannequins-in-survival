@@ -1,4 +1,4 @@
-package org.ferroh.nMIS.types.soulIngredients;
+package org.ferroh.nMIS.types.mannequinSoul.soulIngredients;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -16,12 +16,12 @@ public abstract class SoulIngredient {
         try {
             new SoulStarter(potentialIngredient);
             return true;
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException e) {}
 
         try {
             new Skin(potentialIngredient);
             return true;
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException e) {}
 
         return false;
     }
