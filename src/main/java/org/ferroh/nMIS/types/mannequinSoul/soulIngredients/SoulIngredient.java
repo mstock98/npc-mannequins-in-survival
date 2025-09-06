@@ -9,19 +9,24 @@ public abstract class SoulIngredient {
     public abstract ItemStack toItemStack();
 
     public static boolean itemStackIsIngredient(ItemStack potentialIngredient) {
-        if (potentialIngredient == null || potentialIngredient.getType().equals(Material.AIR)) {
+        if (potentialIngredient == null) {
             return false;
         }
 
         try {
             new SoulStarter(potentialIngredient);
             return true;
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException ignored) {}
 
         try {
             new Skin(potentialIngredient);
             return true;
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException ignored) {}
+
+        try {
+            new HealthBuff(potentialIngredient);
+            return true;
+        } catch (IllegalArgumentException ignored) {}
 
         return false;
     }

@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
 import org.ferroh.nMIS.helpers.ItemHelper;
+import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.HealthBuff;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulIngredient;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulStarter;
@@ -14,20 +15,24 @@ import java.util.List;
 
 public class MannequinSoul {
     private Skin _skin = null;
+    private HealthBuff _healthBuff = null;
+
+    public MannequinSoul() {}
 
     public MannequinSoul(ItemStack[] craftingMatrix) {
-        for (ItemStack ingredient : craftingMatrix) {
-            if (!SoulIngredient.itemStackIsIngredient(ingredient) && !ingredient.getType().equals(Material.AIR)) {
+        for (int i = 1; i < craftingMatrix.length; i++) {
+            if (!SoulIngredient.itemStackIsIngredient(craftingMatrix[i]) && !craftingMatrix[i].getType().equals(Material.AIR)) {
                 throw new IllegalArgumentException("Crafting ingredients has item that isn't a MannequinSoul ingredient");
             }
         }
 
+        // TODO: Make this one loop
         int numSoulStartersInMatrix = 0;
         for (ItemStack ingredient : craftingMatrix) {
             try {
                 new SoulStarter(ingredient);
                 numSoulStartersInMatrix++;
-            } catch (IllegalArgumentException e) {}
+            } catch (IllegalArgumentException ignored) {}
         }
         if (numSoulStartersInMatrix != 1) {
             throw new IllegalArgumentException("Crafting ingredients must contain exactly 1 soul starter");
@@ -38,10 +43,21 @@ public class MannequinSoul {
             try {
                 _skin = new Skin(ingredient);
                 numSkinsInMatrix++;
-            } catch (IllegalArgumentException e) {}
+            } catch (IllegalArgumentException ignored) {}
         }
         if (numSkinsInMatrix > 1) {
             throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 skin");
+        }
+
+        int numHealthBuffsInMatrix = 0;
+        for (ItemStack ingredient : craftingMatrix) {
+            try {
+                _healthBuff = new HealthBuff(ingredient);
+                numHealthBuffsInMatrix++;
+            } catch (IllegalArgumentException ignored) {}
+        }
+        if (numHealthBuffsInMatrix > 1) {
+            throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 health buff");
         }
     }
 
@@ -50,7 +66,7 @@ public class MannequinSoul {
             throw new IllegalArgumentException("Mannequin soul item cannot be null");
         }
 
-        if (!potentialMannequinSoulItem.getType().equals(getMannequinSoulMaterial())) {
+        if (!potentialMannequinSoulItem.getType().equals(getMaterial())) {
             throw new IllegalArgumentException("Wrong mannequin soul material");
         }
 
@@ -61,20 +77,28 @@ public class MannequinSoul {
         ItemStack mannequinSoulItem = potentialMannequinSoulItem; // Rename for readability
 
         // Optional fields
-        String skinUsername = ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.MANNEQUIN_SKIN_USERNAME);
+        String skinUsername = ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.SOUL_SKIN_USERNAME);
         if (skinUsername != null && !skinUsername.isEmpty()) {
             _skin = new Skin(skinUsername);
+        }
+
+        if (ItemHelper.getPersistentBooleanDataDefaultFalse(mannequinSoulItem, PersistentDataKeys.SOUL_HAS_HEALTH_BUFF)) {
+            _healthBuff = new HealthBuff();
         }
     }
 
     public ItemStack toItemStack() {
-        ItemStack itemStack = new ItemStack(getMannequinSoulMaterial());
+        ItemStack itemStack = new ItemStack(getMaterial());
 
         // Populate persistent data
         ItemHelper.setPersistentBooleanData(itemStack, PersistentDataKeys.IS_MANNEQUIN_SOUL, true);
 
         if (getSkin() != null) {
-            ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.MANNEQUIN_SKIN_USERNAME, getSkin().getUsername());
+            ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.SOUL_SKIN_USERNAME, getSkin().getUsername());
+        }
+
+        if (hasHealthBuff()) {
+            ItemHelper.setPersistentBooleanData(itemStack, PersistentDataKeys.SOUL_HAS_HEALTH_BUFF, true);
         }
 
         // Set display info
@@ -88,7 +112,11 @@ public class MannequinSoul {
         return _skin;
     }
 
-    private Material getMannequinSoulMaterial() {
+    public boolean hasHealthBuff() {
+        return _healthBuff != null;
+    }
+
+    public Material getMaterial() {
         return Material.PAPER;
     }
 
@@ -96,15 +124,14 @@ public class MannequinSoul {
         List<String> lore = new ArrayList<>();
 
         lore.add(Strings.SOUL_LORE_INSTRUCTIONS_HEADER);
+        lore.add(" ");
+        lore.add(Strings.SOUL_LORE_PROPERTIES_HEADER);
 
         if (getSkin() != null) {
-            lore.add(" ");
-            lore.add(Strings.SOUL_LORE_PROPERTIES_HEADER);
-
-            if (getSkin() != null) {
-                lore.add(Strings.SOUL_LORE_PROFILE_LABEL + getSkin().getUsername());
-            }
+            lore.add(Strings.SOUL_LORE_PROFILE_LABEL + getSkin().getUsername());
         }
+
+        lore.add(Strings.SOUL_LORE_HEALTH_BUFF_LABEL + hasHealthBuff());
 
         return lore;
     }

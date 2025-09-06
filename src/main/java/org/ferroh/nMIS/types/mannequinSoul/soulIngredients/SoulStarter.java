@@ -32,7 +32,7 @@ public class SoulStarter extends SoulIngredient {
         }
 
         if (!meta.hasDisplayName() || !meta.getDisplayName().equalsIgnoreCase(Strings.SOUL_STARTER_NAME)) {
-            throw new IllegalArgumentException("Item doesn't have the right name");
+            throw new IllegalArgumentException("Item doesn't have the right name. Expected: " + Strings.SOUL_STARTER_NAME + " Actual: " + meta.getDisplayName());
         }
 
         _itemStack = potentialSoulStarterItem;

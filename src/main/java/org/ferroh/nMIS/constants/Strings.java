@@ -7,4 +7,5 @@ public class Strings {
     public static final String SOUL_LORE_INSTRUCTIONS_HEADER = "Right click a block to place this NPC mannequin";
     public static final String SOUL_LORE_PROPERTIES_HEADER = "Properties:";
     public static final String SOUL_LORE_PROFILE_LABEL = "Minecraft profile: ";
+    public static final String SOUL_LORE_HEALTH_BUFF_LABEL = "Has increased health: ";
 }
