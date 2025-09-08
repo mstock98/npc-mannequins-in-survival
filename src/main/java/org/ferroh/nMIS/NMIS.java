@@ -8,6 +8,8 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.ferroh.nMIS.constants.RecipeConstants;
+import org.ferroh.nMIS.listeners.MannequinEquipListener;
+import org.ferroh.nMIS.listeners.MannequinSoulUseListener;
 import org.ferroh.nMIS.listeners.SoulCraftingPrepareListener;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.HealthBuff;
@@ -28,6 +30,8 @@ public final class NMIS extends JavaPlugin {
 
         // Register event listeners
         getServer().getPluginManager().registerEvents(new SoulCraftingPrepareListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinSoulUseListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinEquipListener(), getPlugin());
     }
 
     @Override

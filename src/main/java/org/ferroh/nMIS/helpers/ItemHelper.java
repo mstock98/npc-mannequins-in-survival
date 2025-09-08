@@ -127,7 +127,6 @@ public class ItemHelper {
         setItemMeta(item, meta);
     }
 
-
     // Wrapper method to make ItemMeta-related methods more unit-testable.
     public static ItemMeta getItemMeta(ItemStack item) {
         return item.getItemMeta();

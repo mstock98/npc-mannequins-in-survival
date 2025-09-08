@@ -1,6 +1,12 @@
 package org.ferroh.nMIS.types.mannequinSoul;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
@@ -134,5 +140,31 @@ public class MannequinSoul {
         lore.add(Strings.SOUL_LORE_HEALTH_BUFF_LABEL + hasHealthBuff());
 
         return lore;
+    }
+
+    public Entity spawn(Location location) {
+        if (location == null || location.getWorld() == null) {
+            return null;
+        }
+
+        location = new Location(location.getWorld(), location.getX(), location.getY() + 1.0, location.getZ());
+
+        Zombie fakeMannequin = (Zombie) location.getWorld().spawnEntity(location, EntityType.ZOMBIE);
+
+        fakeMannequin.setAI(false);
+
+        fakeMannequin.setCustomName(getSkin().getUsername());
+        fakeMannequin.setCustomNameVisible(true);
+
+        if (hasHealthBuff()) {
+            AttributeInstance maxHealthAttribute = fakeMannequin.getAttribute(Attribute.MAX_HEALTH);
+
+            if (maxHealthAttribute != null) {
+                maxHealthAttribute.setBaseValue(100.0);
+                fakeMannequin.setHealth(100.0);
+            }
+        }
+
+        return fakeMannequin;
     }
 }
