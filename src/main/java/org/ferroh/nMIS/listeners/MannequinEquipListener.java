@@ -8,12 +8,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class MannequinEquipListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         System.out.println("Handling entity interact event");
+
+        if (e.getHand() != EquipmentSlot.HAND) {
+            return;
+        }
 
         Entity clickedEntity = e.getRightClicked();
 
