@@ -16,10 +16,6 @@ public class MannequinEquipListener implements Listener {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         System.out.println("Handling entity interact event");
 
-        if (e.getHand() != EquipmentSlot.HAND) {
-            return;
-        }
-
         Entity clickedEntity = e.getRightClicked();
 
         // TODO: Check for actual mannequins in the future
@@ -35,6 +31,11 @@ public class MannequinEquipListener implements Listener {
         }
 
         e.setCancelled(true);
+
+        if (e.getHand() != EquipmentSlot.HAND) {
+            System.out.println("Equipment slot is not HAND. It is " + e.getHand());
+            return;
+        }
 
         Player player = e.getPlayer();
         ItemStack playerHeldItem = player.getInventory().getItemInMainHand();

@@ -1,10 +1,15 @@
 package org.ferroh.nMIS.helpers;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.profile.PlayerProfile;
+import org.ferroh.nMIS.NMIS;
 
 import java.util.List;
 
@@ -193,5 +198,31 @@ public class ItemHelper {
         }
 
         return meta.getLore();
+    }
+
+    public static void setPlayerHeadSkin(ItemStack playerHead, String skinUsername) {
+        if (playerHead == null || skinUsername == null || skinUsername.isEmpty()) {
+            return;
+        }
+
+        if (playerHead.getType() != Material.PLAYER_HEAD) {
+            return;
+        }
+
+        SkullMeta meta = (SkullMeta) getItemMeta(playerHead);
+
+        if (meta == null) {
+            return;
+        }
+
+        PlayerProfile profile = Bukkit.createPlayerProfile(skinUsername);
+
+        profile.update().thenAccept(updated -> {
+           Bukkit.getScheduler().runTask(NMIS.getPlugin(), () -> {
+              meta.setOwnerProfile(updated);
+              meta.setOwningPlayer(skinUsername);
+              playerHead.setItemMeta(meta);
+           });
+        });
     }
 }

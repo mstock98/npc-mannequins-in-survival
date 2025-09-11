@@ -17,8 +17,6 @@ public class MannequinSoulUseListener implements Listener {
 
         ItemStack usedItem = e.getPlayer().getInventory().getItemInMainHand();
 
-        System.out.println(usedItem != null ? usedItem.getType() : "null");
-
         MannequinSoul mannequinSoul;
         try {
             mannequinSoul = new MannequinSoul(usedItem);

@@ -101,6 +101,7 @@ public class MannequinSoul {
 
         if (getSkin() != null) {
             ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.SOUL_SKIN_USERNAME, getSkin().getUsername());
+            ItemHelper.setPlayerHeadSkin(itemStack, getSkin().getUsername());
         }
 
         if (hasHealthBuff()) {
@@ -123,7 +124,7 @@ public class MannequinSoul {
     }
 
     public Material getMaterial() {
-        return Material.PAPER;
+        return Material.PLAYER_HEAD;
     }
 
     private List<String> buildLore() {
