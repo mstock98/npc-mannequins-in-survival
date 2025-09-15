@@ -11,15 +11,22 @@ import org.ferroh.nMIS.constants.RecipeConstants;
 import org.ferroh.nMIS.listeners.MannequinEquipListener;
 import org.ferroh.nMIS.listeners.MannequinSoulUseListener;
 import org.ferroh.nMIS.listeners.SoulCraftingPrepareListener;
+import org.ferroh.nMIS.types.CommandState;
+import org.ferroh.nMIS.types.gui.listeners.MannequinEquipCloseListener;
+import org.ferroh.nMIS.types.gui.listeners.MannequinEquipDeadSlotListener;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.HealthBuff;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulStarter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public final class NMIS extends JavaPlugin {
     private static JavaPlugin _plugin;
+
+    private static HashMap<UUID, CommandState> _commandStateMap;
 
     @Override
     public void onEnable() {
@@ -28,10 +35,14 @@ public final class NMIS extends JavaPlugin {
 
         initSoulRecipe();
 
+        _commandStateMap = new HashMap<>();
+
         // Register event listeners
         getServer().getPluginManager().registerEvents(new SoulCraftingPrepareListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinSoulUseListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinEquipCloseListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinEquipDeadSlotListener(), getPlugin());
     }
 
     @Override
@@ -41,6 +52,22 @@ public final class NMIS extends JavaPlugin {
 
     public static JavaPlugin getPlugin() {
         return _plugin;
+    }
+
+    public static CommandState getCommandStateForPlayer(UUID playerUUID) {
+        if (_commandStateMap.containsKey(playerUUID)) {
+            return _commandStateMap.get(playerUUID);
+        }
+
+        return null;
+    }
+
+    public static void setCommandStateForPlayer(UUID playerUUID, CommandState commandState) {
+        _commandStateMap.put(playerUUID, commandState);
+    }
+
+    public static void clearCommandStateForPlayer(UUID playerUUID) {
+        _commandStateMap.remove(playerUUID);
     }
 
     private void initSoulRecipe() {

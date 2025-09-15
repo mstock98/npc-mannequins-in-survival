@@ -10,9 +10,10 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.ferroh.nMIS.types.gui.MannequinEquipGui;
 
 public class MannequinEquipListener implements Listener {
-    @EventHandler
+    /*@EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         System.out.println("Handling entity interact event");
 
@@ -112,5 +113,22 @@ public class MannequinEquipListener implements Listener {
         }
 
         return false;
+    }*/
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
+        Entity clickedEntity = e.getRightClicked();
+
+        // TODO: Check for actual mannequins in the future
+        if (!(clickedEntity instanceof Zombie fakeMannequin)) {
+            System.out.println("Clicked entity is not a zombie");
+            return;
+        }
+
+        EntityEquipment equipment = fakeMannequin.getEquipment();
+
+        if (equipment != null) {
+            new MannequinEquipGui(equipment).display(e.getPlayer());
+        }
     }
 }

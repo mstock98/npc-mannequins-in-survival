@@ -220,9 +220,12 @@ public class ItemHelper {
         profile.update().thenAccept(updated -> {
            Bukkit.getScheduler().runTask(NMIS.getPlugin(), () -> {
               meta.setOwnerProfile(updated);
-              meta.setOwningPlayer(skinUsername);
               playerHead.setItemMeta(meta);
            });
         });
+    }
+
+    public static boolean isNullOrAir(ItemStack itemStack) {
+        return (itemStack == null) || (itemStack.getType().equals(Material.AIR));
     }
 }
