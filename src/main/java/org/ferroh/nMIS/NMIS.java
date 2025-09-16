@@ -3,6 +3,7 @@ package org.ferroh.nMIS;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -19,6 +20,7 @@ import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.HealthBuff;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulStarter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +29,7 @@ public final class NMIS extends JavaPlugin {
     private static JavaPlugin _plugin;
 
     private static HashMap<UUID, CommandState> _commandStateMap;
+    private static List<UUID> _openMannequins;
 
     @Override
     public void onEnable() {
@@ -36,6 +39,7 @@ public final class NMIS extends JavaPlugin {
         initSoulRecipe();
 
         _commandStateMap = new HashMap<>();
+        _openMannequins = new ArrayList<>();
 
         // Register event listeners
         getServer().getPluginManager().registerEvents(new SoulCraftingPrepareListener(), getPlugin());
@@ -68,6 +72,24 @@ public final class NMIS extends JavaPlugin {
 
     public static void clearCommandStateForPlayer(UUID playerUUID) {
         _commandStateMap.remove(playerUUID);
+    }
+
+    public static void markMannequinAsOpen(UUID mannequinID, boolean isOpen) {
+        if (mannequinID == null) {
+            throw new IllegalArgumentException("Mannequin ID cannot be null");
+        }
+
+        if (isOpen) {
+            if (!_openMannequins.contains(mannequinID)) {
+                _openMannequins.add(mannequinID);
+            }
+        } else {
+            _openMannequins.remove(mannequinID);
+        }
+    }
+
+    public static boolean isMannequinOpen(UUID mannequinID) {
+        return _openMannequins.contains(mannequinID);
     }
 
     private void initSoulRecipe() {

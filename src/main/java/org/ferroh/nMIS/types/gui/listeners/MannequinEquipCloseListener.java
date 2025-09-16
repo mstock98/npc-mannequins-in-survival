@@ -12,7 +12,6 @@ import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.MannequinEquipGui;
 
 public class MannequinEquipCloseListener implements Listener {
-    // TODO: Prevent dupes from multiple players accessing the inventory
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         CommandState commandState = NMIS.getCommandStateForPlayer(e.getPlayer().getUniqueId());
@@ -43,5 +42,6 @@ public class MannequinEquipCloseListener implements Listener {
         equipment.setItemInOffHand(offHandItem);
 
         NMIS.clearCommandStateForPlayer(e.getPlayer().getUniqueId());
+        NMIS.markMannequinAsOpen(commandState.getEquipmentGui().getMannequinEntityID(), false);
     }
 }

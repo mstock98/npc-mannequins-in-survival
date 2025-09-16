@@ -11,6 +11,8 @@ import org.ferroh.nMIS.constants.Strings;
 import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.CommandState;
 
+import java.util.UUID;
+
 public class MannequinEquipGui {
     public static int HELMET_GUI_SLOT = 0;
     public static int CHESTPLATE_GUI_SLOT = 1;
@@ -23,15 +25,21 @@ public class MannequinEquipGui {
     public static int DEAD_SLOT_3 = 8;
 
     private EntityEquipment _equipment;
+    private UUID _mannequinEntityID;
 
     private Inventory _inventory = null;
 
-    public MannequinEquipGui(EntityEquipment mannequinEquipment) {
+    public MannequinEquipGui(EntityEquipment mannequinEquipment, UUID mannequinEntityID) {
         if (mannequinEquipment == null) {
             throw new IllegalArgumentException("Mannequin equipment cannot be null");
         }
 
+        if (mannequinEntityID == null) {
+            throw new IllegalArgumentException("Mannequin entity ID cannot be null");
+        }
+
         _equipment = mannequinEquipment;
+        _mannequinEntityID = mannequinEntityID;
     }
 
 
@@ -83,5 +91,9 @@ public class MannequinEquipGui {
 
     public EntityEquipment getEntityEquipment() {
         return _equipment;
+    }
+
+    public UUID getMannequinEntityID() {
+        return _mannequinEntityID;
     }
 }

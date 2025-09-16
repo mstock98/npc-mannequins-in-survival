@@ -1,8 +1,7 @@
 package org.ferroh.nMIS.helpers;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -12,6 +11,8 @@ import org.bukkit.profile.PlayerProfile;
 import org.ferroh.nMIS.NMIS;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class ItemHelper {
     public static void setDisplayName(ItemStack item, String displayName) {
@@ -215,14 +216,28 @@ public class ItemHelper {
             return;
         }
 
-        PlayerProfile profile = Bukkit.createPlayerProfile(skinUsername);
+        PlayerProfile profile = Bukkit.createPlayerProfile(Bukkit.getOfflinePlayer(skinUsername).getUniqueId(), skinUsername);
 
-        profile.update().thenAccept(updated -> {
-           Bukkit.getScheduler().runTask(NMIS.getPlugin(), () -> {
-              meta.setOwnerProfile(updated);
-              playerHead.setItemMeta(meta);
-           });
-        });
+        double stopwatchStart = System.currentTimeMillis() / 1000.0;
+        System.out.println("Attempting to update profile for " + profile.getName() + " (" + profile.getUniqueId() + ")");
+
+        profile.update()
+                .orTimeout(10, TimeUnit.SECONDS)
+                .whenComplete((updatedProfile, ex) -> {
+                    if (ex != null) {
+                        System.out.println("Profile update failed: ");
+                        ex.printStackTrace();
+                    }
+                    Bukkit.getScheduler().runTask(NMIS.getPlugin(), () -> {
+                        System.out.println("Updated profile in " + ((System.currentTimeMillis() / 1000.0) - (stopwatchStart)) + " second(s).");
+                        System.out.println("Texture: " + updatedProfile.getTextures().getSkin());
+                        meta.setOwnerProfile(updatedProfile);
+                        playerHead.setItemMeta(meta);
+
+                        World world = Bukkit.getWorld("world");
+                        world.dropItem(new Location(world, 0, 150, 0), playerHead);
+                    });
+                });
     }
 
     public static boolean isNullOrAir(ItemStack itemStack) {
