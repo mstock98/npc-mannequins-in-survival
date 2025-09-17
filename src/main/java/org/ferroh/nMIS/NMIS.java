@@ -16,6 +16,7 @@ import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.listeners.MannequinEquipCloseListener;
 import org.ferroh.nMIS.types.gui.listeners.MannequinEquipDeadSlotListener;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
+import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Anchor;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.HealthBuff;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulStarter;
@@ -95,7 +96,8 @@ public final class NMIS extends JavaPlugin {
     private void initSoulRecipe() {
         final List<Material> OPTIONAL_INGREDIENTS = List.of(
                 new Skin("").getMaterial(),
-                new HealthBuff().getMaterial());
+                new HealthBuff().getMaterial(),
+                new Anchor().getMaterial());
 
         RecipeChoice.MaterialChoice soulStarterChoice = new RecipeChoice.MaterialChoice(new SoulStarter().getMaterial());
         RecipeChoice.MaterialChoice optionalSoulIngredientChoice = new RecipeChoice.MaterialChoice(OPTIONAL_INGREDIENTS);

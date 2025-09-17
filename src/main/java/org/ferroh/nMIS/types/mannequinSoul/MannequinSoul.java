@@ -11,17 +11,17 @@ import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
 import org.ferroh.nMIS.helpers.ItemHelper;
-import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.HealthBuff;
-import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
-import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulIngredient;
-import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulStarter;
+import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MannequinSoul {
+    private double HEALTH_BUFF_MAX_HP = 100.0d;
+
     private Skin _skin = null;
     private HealthBuff _healthBuff = null;
+    private Anchor _anchor = null;
 
     public MannequinSoul() {}
 
@@ -65,6 +65,17 @@ public class MannequinSoul {
         if (numHealthBuffsInMatrix > 1) {
             throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 health buff");
         }
+
+        int numAnchorsInMatrix = 0;
+        for (ItemStack ingredient : craftingMatrix) {
+            try {
+                _anchor = new Anchor(ingredient);
+                numAnchorsInMatrix++;
+            } catch (IllegalArgumentException ignored) {}
+        }
+        if (numAnchorsInMatrix > 1) {
+            throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 anchor");
+        }
     }
 
     public MannequinSoul(ItemStack potentialMannequinSoulItem) {
@@ -91,6 +102,10 @@ public class MannequinSoul {
         if (ItemHelper.getPersistentBooleanDataDefaultFalse(mannequinSoulItem, PersistentDataKeys.SOUL_HAS_HEALTH_BUFF)) {
             _healthBuff = new HealthBuff();
         }
+
+        if (ItemHelper.getPersistentBooleanDataDefaultFalse(mannequinSoulItem, PersistentDataKeys.SOUL_IS_ANCHORED)) {
+            _anchor = new Anchor();
+        }
     }
 
     public ItemStack toItemStack() {
@@ -101,11 +116,14 @@ public class MannequinSoul {
 
         if (getSkin() != null) {
             ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.SOUL_SKIN_USERNAME, getSkin().getUsername());
-            ItemHelper.setPlayerHeadSkin(itemStack, getSkin().getUsername());
         }
 
         if (hasHealthBuff()) {
             ItemHelper.setPersistentBooleanData(itemStack, PersistentDataKeys.SOUL_HAS_HEALTH_BUFF, true);
+        }
+
+        if (isAnchored()) {
+            ItemHelper.setPersistentBooleanData(itemStack, PersistentDataKeys.SOUL_IS_ANCHORED, true);
         }
 
         // Set display info
@@ -121,6 +139,10 @@ public class MannequinSoul {
 
     public boolean hasHealthBuff() {
         return _healthBuff != null;
+    }
+
+    public boolean isAnchored() {
+        return _anchor != null;
     }
 
     public Material getMaterial() {
@@ -139,6 +161,7 @@ public class MannequinSoul {
         }
 
         lore.add(Strings.SOUL_LORE_HEALTH_BUFF_LABEL + hasHealthBuff());
+        lore.add(Strings.SOUL_LORE_ANCHORED_LABEL + isAnchored());
 
         return lore;
     }
@@ -152,10 +175,14 @@ public class MannequinSoul {
 
         Zombie fakeMannequin = (Zombie) location.getWorld().spawnEntity(location, EntityType.ZOMBIE);
 
-        fakeMannequin.setAI(false);
+        if (isAnchored()) {
+            fakeMannequin.setAI(false);
+        }
 
-        fakeMannequin.setCustomName(getSkin().getUsername());
-        fakeMannequin.setCustomNameVisible(true);
+        if (getSkin() != null) {
+            fakeMannequin.setCustomName(getSkin().getUsername());
+            fakeMannequin.setCustomNameVisible(true);
+        }
 
         if (hasHealthBuff()) {
             AttributeInstance maxHealthAttribute = fakeMannequin.getAttribute(Attribute.MAX_HEALTH);
@@ -167,5 +194,58 @@ public class MannequinSoul {
         }
 
         return fakeMannequin;
+    }
+
+    // TODO: Sanitize input, prevent buffer overflow
+    public String getSummonCommand(Location location) {
+        if (location == null) {
+            return null;
+        }
+
+        return "summon minecraft:mannequin " +
+                location.getX() + " " +
+                location.getY() + " " +
+                location.getZ() + " " +
+                getMannequinNBT();
+    }
+
+    private String getMannequinNBT() {
+        if (getSkin() == null && !hasHealthBuff()) {
+            return "";
+        }
+
+        StringBuilder nbtSB = new StringBuilder();
+
+        if (getSkin() != null) {
+            appendCommaIfNotEmpty(nbtSB);
+            nbtSB.append("profile:\"");
+            nbtSB.append(getSkin().getUsername());
+            nbtSB.append("\"");
+        }
+
+        if (isAnchored()) {
+            appendCommaIfNotEmpty(nbtSB);
+            nbtSB.append("immovable:true");
+        }
+
+        if (hasHealthBuff()) {
+            appendCommaIfNotEmpty(nbtSB);
+            nbtSB.append("attributes:[{id:max_health,base:");
+            nbtSB.append(HEALTH_BUFF_MAX_HP);
+            nbtSB.append("}]");
+        }
+
+        nbtSB.insert(0, '{');
+        nbtSB.append('}');
+
+        return nbtSB.toString();
+    }
+
+    private void appendCommaIfNotEmpty(StringBuilder sb) {
+        if (sb == null || sb.isEmpty()) {
+            return;
+        }
+
+        sb.append(',');
     }
 }

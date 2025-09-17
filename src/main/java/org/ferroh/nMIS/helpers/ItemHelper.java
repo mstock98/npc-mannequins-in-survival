@@ -1,7 +1,7 @@
 package org.ferroh.nMIS.helpers;
 
 import org.bukkit.*;
-import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -11,7 +11,6 @@ import org.bukkit.profile.PlayerProfile;
 import org.ferroh.nMIS.NMIS;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class ItemHelper {
@@ -201,7 +200,7 @@ public class ItemHelper {
         return meta.getLore();
     }
 
-    public static void setPlayerHeadSkin(ItemStack playerHead, String skinUsername) {
+    public static void setPlayerHeadSkinForCraftingEvent(ItemStack playerHead, String skinUsername, PrepareItemCraftEvent event) {
         if (playerHead == null || skinUsername == null || skinUsername.isEmpty()) {
             return;
         }
@@ -234,8 +233,7 @@ public class ItemHelper {
                         meta.setOwnerProfile(updatedProfile);
                         playerHead.setItemMeta(meta);
 
-                        World world = Bukkit.getWorld("world");
-                        world.dropItem(new Location(world, 0, 150, 0), playerHead);
+                        event.getInventory().setResult(playerHead);
                     });
                 });
     }
