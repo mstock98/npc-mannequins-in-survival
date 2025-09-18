@@ -7,7 +7,6 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.NMIS;
-import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.MannequinEquipGui;
 

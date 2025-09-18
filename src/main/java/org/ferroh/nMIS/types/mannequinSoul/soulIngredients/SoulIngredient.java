@@ -28,6 +28,11 @@ public abstract class SoulIngredient {
             return true;
         } catch (IllegalArgumentException ignored) {}
 
+        try {
+            new Anchor(potentialIngredient);
+            return true;
+        } catch (IllegalArgumentException ignored) {}
+
         return false;
     }
 

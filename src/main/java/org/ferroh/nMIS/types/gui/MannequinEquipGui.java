@@ -24,8 +24,8 @@ public class MannequinEquipGui {
     public static int DEAD_SLOT_2 = 7;
     public static int DEAD_SLOT_3 = 8;
 
-    private EntityEquipment _equipment;
-    private UUID _mannequinEntityID;
+    private final EntityEquipment _equipment;
+    private final UUID _mannequinEntityID;
 
     private Inventory _inventory = null;
 

@@ -1,9 +1,11 @@
 package org.ferroh.nMIS.types.mannequinSoul;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Zombie;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MannequinSoul {
-    private double HEALTH_BUFF_MAX_HP = 100.0d;
+    private final double HEALTH_BUFF_MAX_HP = 100.0d;
 
     private Skin _skin = null;
     private HealthBuff _healthBuff = null;
@@ -32,47 +34,45 @@ public class MannequinSoul {
             }
         }
 
-        // TODO: Make this one loop
         int numSoulStartersInMatrix = 0;
+        int numSkinsInMatrix = 0;
+        int numHealthBuffsInMatrix = 0;
+        int numAnchorsInMatrix = 0;
+
         for (ItemStack ingredient : craftingMatrix) {
             try {
                 new SoulStarter(ingredient);
                 numSoulStartersInMatrix++;
             } catch (IllegalArgumentException ignored) {}
-        }
-        if (numSoulStartersInMatrix != 1) {
-            throw new IllegalArgumentException("Crafting ingredients must contain exactly 1 soul starter");
-        }
 
-        int numSkinsInMatrix = 0;
-        for (ItemStack ingredient : craftingMatrix) {
             try {
                 _skin = new Skin(ingredient);
                 numSkinsInMatrix++;
             } catch (IllegalArgumentException ignored) {}
-        }
-        if (numSkinsInMatrix > 1) {
-            throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 skin");
-        }
 
-        int numHealthBuffsInMatrix = 0;
-        for (ItemStack ingredient : craftingMatrix) {
             try {
                 _healthBuff = new HealthBuff(ingredient);
                 numHealthBuffsInMatrix++;
             } catch (IllegalArgumentException ignored) {}
-        }
-        if (numHealthBuffsInMatrix > 1) {
-            throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 health buff");
-        }
 
-        int numAnchorsInMatrix = 0;
-        for (ItemStack ingredient : craftingMatrix) {
             try {
                 _anchor = new Anchor(ingredient);
                 numAnchorsInMatrix++;
             } catch (IllegalArgumentException ignored) {}
         }
+
+        if (numSoulStartersInMatrix != 1) {
+            throw new IllegalArgumentException("Crafting ingredients must contain exactly 1 soul starter");
+        }
+
+        if (numSkinsInMatrix > 1) {
+            throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 skin");
+        }
+
+        if (numHealthBuffsInMatrix > 1) {
+            throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 health buff");
+        }
+
         if (numAnchorsInMatrix > 1) {
             throw new IllegalArgumentException("Crafting ingredients cannot contain more than 1 anchor");
         }
@@ -152,16 +152,24 @@ public class MannequinSoul {
     private List<String> buildLore() {
         List<String> lore = new ArrayList<>();
 
-        lore.add(Strings.SOUL_LORE_INSTRUCTIONS_HEADER);
-        lore.add(" ");
-        lore.add(Strings.SOUL_LORE_PROPERTIES_HEADER);
+        lore.add(ChatColor.WHITE + Strings.SOUL_LORE_INSTRUCTIONS_HEADER);
 
         if (getSkin() != null) {
-            lore.add(Strings.SOUL_LORE_PROFILE_LABEL + getSkin().getUsername());
+            lore.add(ChatColor.YELLOW + Strings.SOUL_LORE_PROFILE_LABEL + getSkin().getUsername());
         }
 
-        lore.add(Strings.SOUL_LORE_HEALTH_BUFF_LABEL + hasHealthBuff());
-        lore.add(Strings.SOUL_LORE_ANCHORED_LABEL + isAnchored());
+        if (hasHealthBuff()) {
+            lore.add(ChatColor.DARK_RED + Strings.SOUL_LORE_HEALTH_BUFF_LABEL);
+        }
+
+        if (isAnchored()) {
+            lore.add(ChatColor.DARK_GRAY + Strings.SOUL_LORE_ANCHORED_LABEL);
+        }
+
+        if (lore.size() > 1) {
+            lore.add(1, " ");
+            lore.add(2, ChatColor.UNDERLINE + Strings.SOUL_LORE_PROPERTIES_HEADER);
+        }
 
         return lore;
     }
@@ -196,7 +204,6 @@ public class MannequinSoul {
         return fakeMannequin;
     }
 
-    // TODO: Sanitize input, prevent buffer overflow
     public String getSummonCommand(Location location) {
         if (location == null) {
             return null;

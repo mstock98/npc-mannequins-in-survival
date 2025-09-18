@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.helpers.ItemHelper;
 
 public class Skin extends SoulIngredient {
-    private String _username;
+    private final String _username;
     private ItemStack _itemStack;
 
     public Skin(String skinUsername) {
@@ -25,6 +25,10 @@ public class Skin extends SoulIngredient {
 
         if (username == null) {
             throw new IllegalArgumentException("Skin username is null");
+        }
+
+        if (!username.matches("[a-zA-Z\\d_]{3,16}")) {
+            throw new IllegalArgumentException("Invalid minecraft username");
         }
 
         _username = username;
