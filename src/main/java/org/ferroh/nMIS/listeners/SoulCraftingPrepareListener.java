@@ -6,7 +6,6 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.CraftingRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.constants.RecipeConstants;
-import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 
 public class SoulCraftingPrepareListener implements Listener {
@@ -31,9 +30,5 @@ public class SoulCraftingPrepareListener implements Listener {
         }
 
         e.getInventory().setResult(mannequinSoul.toItemStack());
-
-        if (mannequinSoul.getSkin() != null) {
-            ItemHelper.setPlayerHeadSkinForCraftingEvent(e.getInventory().getResult(), mannequinSoul.getSkin().getUsername(), e);
-        }
     }
 }

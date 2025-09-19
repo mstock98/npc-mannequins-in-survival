@@ -8,6 +8,7 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.ferroh.nMIS.constants.RecipeConstants;
+import org.ferroh.nMIS.listeners.FetchPlayerProfileListener;
 import org.ferroh.nMIS.listeners.MannequinEquipListener;
 import org.ferroh.nMIS.listeners.MannequinSoulUseListener;
 import org.ferroh.nMIS.listeners.SoulCraftingPrepareListener;
@@ -47,6 +48,7 @@ public final class NMIS extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MannequinEquipListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipCloseListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipDeadSlotListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new FetchPlayerProfileListener(), getPlugin());
     }
 
     @Override

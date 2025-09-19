@@ -116,6 +116,7 @@ public class MannequinSoul {
 
         if (getSkin() != null) {
             ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.SOUL_SKIN_USERNAME, getSkin().getUsername());
+            ItemHelper.setPlayerHeadSkinFromCache(itemStack, getSkin().getUsername());
         }
 
         if (hasHealthBuff()) {
@@ -168,7 +169,7 @@ public class MannequinSoul {
 
         if (lore.size() > 1) {
             lore.add(1, " ");
-            lore.add(2, ChatColor.UNDERLINE + Strings.SOUL_LORE_PROPERTIES_HEADER);
+            lore.add(2, ChatColor.WHITE + "" + ChatColor.UNDERLINE + Strings.SOUL_LORE_PROPERTIES_HEADER);
         }
 
         return lore;

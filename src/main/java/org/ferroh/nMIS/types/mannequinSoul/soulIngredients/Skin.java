@@ -23,11 +23,7 @@ public class Skin extends SoulIngredient {
 
         String username = ItemHelper.getDisplayName(potentialSkinItem);
 
-        if (username == null) {
-            throw new IllegalArgumentException("Skin username is null");
-        }
-
-        if (!username.matches("[a-zA-Z\\d_]{3,16}")) {
+        if (!usernameIsValid(username)) {
             throw new IllegalArgumentException("Invalid minecraft username");
         }
 
@@ -52,5 +48,13 @@ public class Skin extends SoulIngredient {
 
     public String getUsername() {
         return _username;
+    }
+
+    public static boolean usernameIsValid(String username) {
+        if (username == null) {
+            return false;
+        }
+
+        return username.matches("[a-zA-Z\\d_]{3,16}");
     }
 }

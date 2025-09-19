@@ -9,6 +9,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.profile.PlayerProfile;
 import org.ferroh.nMIS.NMIS;
+import org.ferroh.nMIS.listeners.FetchPlayerProfileListener;
+import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -200,12 +202,22 @@ public class ItemHelper {
         return meta.getLore();
     }
 
-    public static void setPlayerHeadSkinForCraftingEvent(ItemStack playerHead, String skinUsername, PrepareItemCraftEvent event) {
-        if (playerHead == null || skinUsername == null || skinUsername.isEmpty()) {
+    public static boolean isNullOrAir(ItemStack itemStack) {
+        return (itemStack == null) || (itemStack.getType().equals(Material.AIR));
+    }
+
+    public static void setPlayerHeadSkinFromCache(ItemStack playerHead, String skinUsername) {
+        if (playerHead == null || playerHead.getType() != Material.PLAYER_HEAD) {
             return;
         }
 
-        if (playerHead.getType() != Material.PLAYER_HEAD) {
+        if (!Skin.usernameIsValid(skinUsername)) {
+            return;
+        }
+
+        PlayerProfile profile = FetchPlayerProfileListener.getCachedPlayerProfile(skinUsername);
+
+        if (profile == null) {
             return;
         }
 
@@ -215,30 +227,8 @@ public class ItemHelper {
             return;
         }
 
-        PlayerProfile profile = Bukkit.createPlayerProfile(Bukkit.getOfflinePlayer(skinUsername).getUniqueId(), skinUsername);
+        meta.setOwnerProfile(profile);
 
-        double stopwatchStart = System.currentTimeMillis() / 1000.0;
-        System.out.println("Attempting to update profile for " + profile.getName() + " (" + profile.getUniqueId() + ")");
-
-        profile.update()
-                .orTimeout(10, TimeUnit.SECONDS)
-                .whenComplete((updatedProfile, ex) -> {
-                    if (ex != null) {
-                        System.out.println("Profile update failed: ");
-                        ex.printStackTrace();
-                    }
-                    Bukkit.getScheduler().runTask(NMIS.getPlugin(), () -> {
-                        System.out.println("Updated profile in " + ((System.currentTimeMillis() / 1000.0) - (stopwatchStart)) + " second(s).");
-                        System.out.println("Texture: " + updatedProfile.getTextures().getSkin());
-                        meta.setOwnerProfile(updatedProfile);
-                        playerHead.setItemMeta(meta);
-
-                        event.getInventory().setResult(playerHead);
-                    });
-                });
-    }
-
-    public static boolean isNullOrAir(ItemStack itemStack) {
-        return (itemStack == null) || (itemStack.getType().equals(Material.AIR));
+        playerHead.setItemMeta(meta);
     }
 }
