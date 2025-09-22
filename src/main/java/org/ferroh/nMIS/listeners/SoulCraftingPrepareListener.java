@@ -8,7 +8,14 @@ import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.constants.RecipeConstants;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 
+/**
+ * Event handler for crafting MannequinSouls
+ */
 public class SoulCraftingPrepareListener implements Listener {
+    /**
+     * Main event handler
+     * @param e Event to handle
+     */
     @EventHandler
     public void onPrepareItemCraft(PrepareItemCraftEvent e) {
         if (!(e.getRecipe() instanceof CraftingRecipe craftingRecipe)) {

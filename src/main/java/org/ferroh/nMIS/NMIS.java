@@ -26,12 +26,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Main plugin class for NPC Mannequins in Survival
+ */
 public final class NMIS extends JavaPlugin {
+    /**
+     * Plugin instance
+     */
     private static JavaPlugin _plugin;
 
+    /**
+     * Current command status for all players
+     */
     private static HashMap<UUID, CommandState> _commandStateMap;
+
+    /**
+     * Map of all mannequins that have equipment GUIs open
+     */
     private static List<UUID> _openMannequins;
 
+    /**
+     * Logic to run when this plugin is enabled
+     */
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -51,15 +67,19 @@ public final class NMIS extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FetchPlayerProfileListener(), getPlugin());
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
-
+    /**
+     * Get the plugin instance
+     * @return NMIS plugin object
+     */
     public static JavaPlugin getPlugin() {
         return _plugin;
     }
 
+    /**
+     * Get a player's current command state
+     * @param playerUUID Player ID
+     * @return Command state for player, null if there isn't any
+     */
     public static CommandState getCommandStateForPlayer(UUID playerUUID) {
         if (_commandStateMap.containsKey(playerUUID)) {
             return _commandStateMap.get(playerUUID);
@@ -68,14 +88,28 @@ public final class NMIS extends JavaPlugin {
         return null;
     }
 
+    /**
+     * Set the command state for a particular player
+     * @param playerUUID Player ID to set command state for
+     * @param commandState Command state that the player should have
+     */
     public static void setCommandStateForPlayer(UUID playerUUID, CommandState commandState) {
         _commandStateMap.put(playerUUID, commandState);
     }
 
+    /**
+     * Set the command state to null for a particular player
+     * @param playerUUID Player ID to clear command state for
+     */
     public static void clearCommandStateForPlayer(UUID playerUUID) {
         _commandStateMap.remove(playerUUID);
     }
 
+    /**
+     * Mark a particular mannequin as having their equipment GUI open/closed
+     * @param mannequinID UUID of the mannequin entity
+     * @param isOpen True to mark the mannequin as open, false to mark the mannequin as closed
+     */
     public static void markMannequinAsOpen(UUID mannequinID, boolean isOpen) {
         if (mannequinID == null) {
             throw new IllegalArgumentException("Mannequin ID cannot be null");
@@ -90,10 +124,18 @@ public final class NMIS extends JavaPlugin {
         }
     }
 
+    /**
+     * Determine whether a mannequin entity has their equipment GUI opened by a player
+     * @param mannequinID UUID of the mannequin entity
+     * @return True if the mannequin has its equipment GUI open
+     */
     public static boolean isMannequinOpen(UUID mannequinID) {
         return _openMannequins.contains(mannequinID);
     }
 
+    /**
+     * Initialize the crafting recipe for a mannequin sour
+     */
     private void initSoulRecipe() {
         final List<Material> OPTIONAL_INGREDIENTS = List.of(
                 new Skin("").getMaterial(),

@@ -13,7 +13,11 @@ import org.ferroh.nMIS.types.CommandState;
 
 import java.util.UUID;
 
+/**
+ * Class representing the mannequin equipment GUI
+ */
 public class MannequinEquipGui {
+    // Constants for inventory slot numbers in the GUI
     public static int HELMET_GUI_SLOT = 0;
     public static int CHESTPLATE_GUI_SLOT = 1;
     public static int LEGGINGS_GUI_SLOT = 2;
@@ -24,11 +28,26 @@ public class MannequinEquipGui {
     public static int DEAD_SLOT_2 = 7;
     public static int DEAD_SLOT_3 = 8;
 
+    /**
+     * Equipment object for the mannequin for this GUI
+     */
     private final EntityEquipment _equipment;
+
+    /**
+     * UUID of the mannequin for this GUI
+     */
     private final UUID _mannequinEntityID;
 
+    /**
+     * Inventory object for this GUI
+     */
     private Inventory _inventory = null;
 
+    /**
+     * Create a new MannequinEquipGui for a given mannequin equipment object and mannequin entity UUID
+     * @param mannequinEquipment Equipment items (inventory) that the mannequin has
+     * @param mannequinEntityID UUID of the mannequin entity
+     */
     public MannequinEquipGui(EntityEquipment mannequinEquipment, UUID mannequinEntityID) {
         if (mannequinEquipment == null) {
             throw new IllegalArgumentException("Mannequin equipment cannot be null");
@@ -42,7 +61,10 @@ public class MannequinEquipGui {
         _mannequinEntityID = mannequinEntityID;
     }
 
-
+    /**
+     * Show this mannequin equipment GUI to the specified player
+     * @param player Player to show this GUI to
+     */
     public void display(Player player) {
         if (player == null) {
             return;
@@ -74,6 +96,7 @@ public class MannequinEquipGui {
             _inventory.setItem(OFF_HAND_GUI_SLOT, _equipment.getItemInOffHand());
         }
 
+        // Set the dead slots
         for (int i = 6; i < 9; i++) {
             _inventory.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
         }
@@ -84,15 +107,27 @@ public class MannequinEquipGui {
         commandState.setEquipmentGui(this);
         NMIS.setCommandStateForPlayer(player.getUniqueId(), commandState);
     }
-    
+
+    /**
+     * Get the Inventory object for this GUI
+     * @return Inventory object tied to the GUI
+     */
     public Inventory getInventory() {
         return _inventory;
     }
 
+    /**
+     * Get the equipment object for the mannequin tied to this GUI
+     * @return Entity equipment object for the mannequin
+     */
     public EntityEquipment getEntityEquipment() {
         return _equipment;
     }
 
+    /**
+     * Get the entity ID for the mannequin tied to this GUI
+     * @return Entity ID for mannequin
+     */
     public UUID getMannequinEntityID() {
         return _mannequinEntityID;
     }

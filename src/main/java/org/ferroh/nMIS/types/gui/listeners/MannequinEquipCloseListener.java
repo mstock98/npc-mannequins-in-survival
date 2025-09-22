@@ -10,7 +10,14 @@ import org.ferroh.nMIS.NMIS;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.MannequinEquipGui;
 
+/**
+ * Listener for closing the mannequin equipment GUI
+ */
 public class MannequinEquipCloseListener implements Listener {
+    /**
+     * Main event handler
+     * @param e Event to handle
+     */
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         CommandState commandState = NMIS.getCommandStateForPlayer(e.getPlayer().getUniqueId());

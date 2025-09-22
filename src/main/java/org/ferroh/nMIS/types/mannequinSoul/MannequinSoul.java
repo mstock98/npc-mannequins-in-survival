@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Zombie;
@@ -18,15 +17,30 @@ import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing a mannequin in item form
+ */
 public class MannequinSoul {
+    /**
+     * Amount of HP that HealthBuff should grant
+     */
     private final double HEALTH_BUFF_MAX_HP = 100.0d;
 
+    // Optional SoulIngredients
     private Skin _skin = null;
     private HealthBuff _healthBuff = null;
     private Anchor _anchor = null;
 
+    /**
+     * Create a new MannequinSoul not based on any ItemStack or crafting matrix
+     */
     public MannequinSoul() {}
 
+    /**
+     * Create a new MannequinSoul based on a crafting matrix (crafting ingredients)
+     * Throws an IllegalArgumentException if the crafting matrix is not a valid soul recipe
+     * @param craftingMatrix Crafting ingredients to craft the mannequin soul
+     */
     public MannequinSoul(ItemStack[] craftingMatrix) {
         for (int i = 1; i < craftingMatrix.length; i++) {
             if (!SoulIngredient.itemStackIsIngredient(craftingMatrix[i]) && !craftingMatrix[i].getType().equals(Material.AIR)) {
@@ -78,6 +92,10 @@ public class MannequinSoul {
         }
     }
 
+    /**
+     * Create a mannequin soul from an ItemStack that represents it
+     * @param potentialMannequinSoulItem ItemStack representing the mannequin soul
+     */
     public MannequinSoul(ItemStack potentialMannequinSoulItem) {
         if (potentialMannequinSoulItem == null) {
             throw new IllegalArgumentException("Mannequin soul item cannot be null");
@@ -108,6 +126,10 @@ public class MannequinSoul {
         }
     }
 
+    /**
+     * Convert this mannequin soul to an ItemStack
+     * @return ItemStack representing this MannequinSoul
+     */
     public ItemStack toItemStack() {
         ItemStack itemStack = new ItemStack(getMaterial());
 
@@ -134,22 +156,42 @@ public class MannequinSoul {
         return itemStack;
     }
 
+    /**
+     * Get the Skin ingredient for this mannequin soul
+     * @return Skin ingredient
+     */
     public Skin getSkin() {
         return _skin;
     }
 
+    /**
+     * Determine whether this mannequin soul has a health buff
+     * @return True if this mannequin soul has a health buff
+     */
     public boolean hasHealthBuff() {
         return _healthBuff != null;
     }
 
+    /**
+     * Determine whether this mannequin soul is anchored
+     * @return True if this mannequin soul is anchored
+     */
     public boolean isAnchored() {
         return _anchor != null;
     }
 
+    /**
+     * Get the material that ItemStacks that represent a mannequin soul should have
+     * @return Material for mannequin soul items
+     */
     public Material getMaterial() {
         return Material.PLAYER_HEAD;
     }
 
+    /**
+     * Create the ItemStack lore for this mannequin soul
+     * @return ItemStack lore for this mannequin soul
+     */
     private List<String> buildLore() {
         List<String> lore = new ArrayList<>();
 
@@ -175,6 +217,11 @@ public class MannequinSoul {
         return lore;
     }
 
+    /**
+     * Spawn a mannequin entity from this mannequin soul
+     * @param location Location to spawn mannequin at
+     * @return Spawned mannequin entity
+     */
     public Entity spawn(Location location) {
         if (location == null || location.getWorld() == null) {
             return null;
@@ -205,6 +252,11 @@ public class MannequinSoul {
         return fakeMannequin;
     }
 
+    /**
+     * Get the command to summon a mannequin based on this mannequin soul
+     * @param location Location to summon the mannequin at
+     * @return Mannequin summon command
+     */
     public String getSummonCommand(Location location) {
         if (location == null) {
             return null;
@@ -217,6 +269,10 @@ public class MannequinSoul {
                 getMannequinNBT();
     }
 
+    /**
+     * Get the mannequin summoning command NBT for this mannequin soul
+     * @return Summoning command NBT
+     */
     private String getMannequinNBT() {
         if (getSkin() == null && !hasHealthBuff()) {
             return "";
@@ -249,6 +305,10 @@ public class MannequinSoul {
         return nbtSB.toString();
     }
 
+    /**
+     * Appends a comma to a summoning command if the command is not empty
+     * @param sb StringBuilder for the summoning command
+     */
     private void appendCommaIfNotEmpty(StringBuilder sb) {
         if (sb == null || sb.isEmpty()) {
             return;

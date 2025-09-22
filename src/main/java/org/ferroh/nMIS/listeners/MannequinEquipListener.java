@@ -9,7 +9,14 @@ import org.bukkit.inventory.EntityEquipment;
 import org.ferroh.nMIS.NMIS;
 import org.ferroh.nMIS.types.gui.MannequinEquipGui;
 
+/**
+ * Listener for accessing/changing the equipment on a mannequin
+ */
 public class MannequinEquipListener implements Listener {
+    /**
+     * Main event handler
+     * @param e Event to handle
+     */
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         Entity clickedEntity = e.getRightClicked();

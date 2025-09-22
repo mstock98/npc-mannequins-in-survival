@@ -3,6 +3,9 @@ package org.ferroh.nMIS.constants;
 import org.bukkit.NamespacedKey;
 import org.ferroh.nMIS.NMIS;
 
+/**
+ * Namespaced keys for getting/setting persistent data inside ItemStacks
+ */
 public class PersistentDataKeys {
     public static final NamespacedKey IS_MANNEQUIN_SOUL = new NamespacedKey(NMIS.getPlugin(), "isMannequinSoul");
 

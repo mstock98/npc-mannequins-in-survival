@@ -1,5 +1,8 @@
 package org.ferroh.nMIS.constants;
 
+/**
+ * User-facing string constants
+ */
 public class Strings {
     public static final String SOUL_NAME = "Mannequin Soul";
     public static final String SOUL_STARTER_NAME = "Mannequin Soul Starter";

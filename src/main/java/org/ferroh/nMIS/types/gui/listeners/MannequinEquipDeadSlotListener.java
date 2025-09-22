@@ -7,7 +7,14 @@ import org.ferroh.nMIS.NMIS;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.MannequinEquipGui;
 
+/**
+ * Listener for clicking on the unused "dead" slots inside the mannequin equipment GUI
+ */
 public class MannequinEquipDeadSlotListener implements Listener {
+    /**
+     * Main event handler
+     * @param e Event to handle
+     */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         CommandState commandState = NMIS.getCommandStateForPlayer(e.getWhoClicked().getUniqueId());
