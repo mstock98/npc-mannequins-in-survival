@@ -1,5 +1,6 @@
 package org.ferroh.nMIS;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,10 +22,7 @@ import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.HealthBuff;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulStarter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Main plugin class for NPC Mannequins in Survival
@@ -46,12 +44,19 @@ public final class NMIS extends JavaPlugin {
     private static List<UUID> _openMannequins;
 
     /**
+     * bStats plugin ID (for metrics)
+     */
+    private static final int BSTATS_PLUGIN_ID = 27362;
+
+    /**
      * Logic to run when this plugin is enabled
      */
     @Override
     public void onEnable() {
         // Plugin startup logic
         _plugin = this;
+
+        Metrics metrics = new Metrics(getPlugin(), BSTATS_PLUGIN_ID);
 
         initSoulRecipe();
 
@@ -65,6 +70,16 @@ public final class NMIS extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MannequinEquipCloseListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipDeadSlotListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new FetchPlayerProfileListener(), getPlugin());
+    }
+
+    /**
+     * Logic to run when the plugin is disabled
+     */
+    @Override
+    public void onDisable() {
+        for (Map.Entry<UUID, CommandState> commandStateEntry : _commandStateMap.entrySet()) {
+            MannequinEquipCloseListener.resolveMannequinOpenCommandState(commandStateEntry.getValue(), commandStateEntry.getKey());
+        }
     }
 
     /**

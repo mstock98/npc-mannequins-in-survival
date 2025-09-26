@@ -34,8 +34,9 @@ public class MannequinEquipListener implements Listener {
 
         if (equipment != null) {
             NMIS.markMannequinAsOpen(clickedEntity.getUniqueId(), true);
+            fakeMannequin.setInvulnerable(true);
 
-            new MannequinEquipGui(equipment, clickedEntity.getUniqueId()).display(e.getPlayer());
+            new MannequinEquipGui(equipment, fakeMannequin).display(e.getPlayer());
         }
     }
 }

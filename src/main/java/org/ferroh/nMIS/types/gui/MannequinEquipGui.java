@@ -2,7 +2,9 @@ package org.ferroh.nMIS.types.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -18,25 +20,20 @@ import java.util.UUID;
  */
 public class MannequinEquipGui {
     // Constants for inventory slot numbers in the GUI
-    public static int HELMET_GUI_SLOT = 0;
-    public static int CHESTPLATE_GUI_SLOT = 1;
-    public static int LEGGINGS_GUI_SLOT = 2;
-    public static int BOOTS_GUI_SLOT = 3;
-    public static int MAIN_HAND_GUI_SLOT = 4;
-    public static int OFF_HAND_GUI_SLOT = 5;
-    public static int DEAD_SLOT_1 = 6;
-    public static int DEAD_SLOT_2 = 7;
-    public static int DEAD_SLOT_3 = 8;
+    public static final int HELMET_GUI_SLOT = 0;
+    public static final int CHESTPLATE_GUI_SLOT = 1;
+    public static final int LEGGINGS_GUI_SLOT = 2;
+    public static final int BOOTS_GUI_SLOT = 3;
+    public static final int MAIN_HAND_GUI_SLOT = 4;
+    public static final int OFF_HAND_GUI_SLOT = 5;
+    public static final int DEAD_SLOT_1 = 6;
+    public static final int DEAD_SLOT_2 = 7;
+    public static final int DEAD_SLOT_3 = 8;
 
     /**
      * Equipment object for the mannequin for this GUI
      */
-    private final EntityEquipment _equipment;
-
-    /**
-     * UUID of the mannequin for this GUI
-     */
-    private final UUID _mannequinEntityID;
+    private final Zombie _mannequin;
 
     /**
      * Inventory object for this GUI
@@ -46,19 +43,18 @@ public class MannequinEquipGui {
     /**
      * Create a new MannequinEquipGui for a given mannequin equipment object and mannequin entity UUID
      * @param mannequinEquipment Equipment items (inventory) that the mannequin has
-     * @param mannequinEntityID UUID of the mannequin entity
+     * @param mannequin The mannequin entity
      */
-    public MannequinEquipGui(EntityEquipment mannequinEquipment, UUID mannequinEntityID) {
+    public MannequinEquipGui(EntityEquipment mannequinEquipment, Zombie mannequin) {
         if (mannequinEquipment == null) {
             throw new IllegalArgumentException("Mannequin equipment cannot be null");
         }
 
-        if (mannequinEntityID == null) {
-            throw new IllegalArgumentException("Mannequin entity ID cannot be null");
+        if (mannequin == null) {
+            throw new IllegalArgumentException("Mannequin entity cannot be null");
         }
 
-        _equipment = mannequinEquipment;
-        _mannequinEntityID = mannequinEntityID;
+        _mannequin = mannequin;
     }
 
     /**
@@ -72,28 +68,30 @@ public class MannequinEquipGui {
 
         _inventory = Bukkit.createInventory(null, 9, Strings.MANNEQUIN_EQUIPMENT_GUI_LABEL);
 
-        if (!ItemHelper.isNullOrAir(_equipment.getHelmet())) {
-            _inventory.setItem(HELMET_GUI_SLOT, _equipment.getHelmet());
+        EntityEquipment equipment = _mannequin.getEquipment();
+
+        if (!ItemHelper.isNullOrAir(equipment.getHelmet())) {
+            _inventory.setItem(HELMET_GUI_SLOT, equipment.getHelmet());
         }
 
-        if (!ItemHelper.isNullOrAir(_equipment.getChestplate())) {
-            _inventory.setItem(CHESTPLATE_GUI_SLOT, _equipment.getChestplate());
+        if (!ItemHelper.isNullOrAir(equipment.getChestplate())) {
+            _inventory.setItem(CHESTPLATE_GUI_SLOT, equipment.getChestplate());
         }
 
-        if (!ItemHelper.isNullOrAir(_equipment.getLeggings())) {
-            _inventory.setItem(LEGGINGS_GUI_SLOT, _equipment.getLeggings());
+        if (!ItemHelper.isNullOrAir(equipment.getLeggings())) {
+            _inventory.setItem(LEGGINGS_GUI_SLOT, equipment.getLeggings());
         }
 
-        if (!ItemHelper.isNullOrAir(_equipment.getBoots())) {
-            _inventory.setItem(BOOTS_GUI_SLOT, _equipment.getBoots());
+        if (!ItemHelper.isNullOrAir(equipment.getBoots())) {
+            _inventory.setItem(BOOTS_GUI_SLOT, equipment.getBoots());
         }
 
-        if (!ItemHelper.isNullOrAir(_equipment.getItemInMainHand())) {
-            _inventory.setItem(MAIN_HAND_GUI_SLOT, _equipment.getItemInMainHand());
+        if (!ItemHelper.isNullOrAir(equipment.getItemInMainHand())) {
+            _inventory.setItem(MAIN_HAND_GUI_SLOT, equipment.getItemInMainHand());
         }
 
-        if (!ItemHelper.isNullOrAir(_equipment.getItemInOffHand())) {
-            _inventory.setItem(OFF_HAND_GUI_SLOT, _equipment.getItemInOffHand());
+        if (!ItemHelper.isNullOrAir(equipment.getItemInOffHand())) {
+            _inventory.setItem(OFF_HAND_GUI_SLOT, equipment.getItemInOffHand());
         }
 
         // Set the dead slots
@@ -121,7 +119,7 @@ public class MannequinEquipGui {
      * @return Entity equipment object for the mannequin
      */
     public EntityEquipment getEntityEquipment() {
-        return _equipment;
+        return _mannequin.getEquipment();
     }
 
     /**
@@ -129,6 +127,14 @@ public class MannequinEquipGui {
      * @return Entity ID for mannequin
      */
     public UUID getMannequinEntityID() {
-        return _mannequinEntityID;
+        return _mannequin.getUniqueId();
+    }
+
+    /**
+     * Get the mannequin entity associated with this GUI
+     * @return Mannequin that is having its equipment changed via this GUI
+     */
+    public Zombie getMannequin() {
+        return _mannequin;
     }
 }
