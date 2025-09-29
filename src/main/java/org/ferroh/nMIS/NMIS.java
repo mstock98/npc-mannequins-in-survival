@@ -15,14 +15,19 @@ import org.ferroh.nMIS.listeners.MannequinSoulUseListener;
 import org.ferroh.nMIS.listeners.SoulCraftingPrepareListener;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.listeners.MannequinEquipCloseListener;
-import org.ferroh.nMIS.types.gui.listeners.MannequinEquipDeadSlotListener;
+import org.ferroh.nMIS.types.gui.listeners.MannequinEquipClickDeadSlotListener;
+import org.ferroh.nMIS.types.gui.listeners.MannequinEquipDeadSlotMoveListener;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Anchor;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.HealthBuff;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulStarter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Main plugin class for NPC Mannequins in Survival
@@ -68,8 +73,9 @@ public final class NMIS extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MannequinSoulUseListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipCloseListener(), getPlugin());
-        getServer().getPluginManager().registerEvents(new MannequinEquipDeadSlotListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinEquipClickDeadSlotListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new FetchPlayerProfileListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinEquipDeadSlotMoveListener(), getPlugin());
     }
 
     /**

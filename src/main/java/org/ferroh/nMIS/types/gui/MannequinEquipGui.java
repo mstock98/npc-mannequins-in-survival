@@ -2,13 +2,13 @@ package org.ferroh.nMIS.types.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.NMIS;
+import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
 import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.CommandState;
@@ -95,8 +95,11 @@ public class MannequinEquipGui {
         }
 
         // Set the dead slots
+        ItemStack deadSlotItem = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemHelper.setPersistentBooleanData(deadSlotItem, PersistentDataKeys.IS_DEAD_SLOT_ITEM, true);
+
         for (int i = 6; i < 9; i++) {
-            _inventory.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+            _inventory.setItem(i, deadSlotItem);
         }
 
         player.openInventory(_inventory);
