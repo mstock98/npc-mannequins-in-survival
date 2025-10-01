@@ -23,15 +23,14 @@ import java.util.List;
  */
 public class MannequinSoul {
     /**
-     * Chance that equipment for mannequins will be dropped on death.
-     * This is a 100% chance, and the value of 2.0 is what Minecraft uses to keep the correct durability too
-     */
-    public static final float ITEM_DROP_CHANCE = 2.0f;
-
-    /**
      * Amount of HP that HealthBuff should grant
      */
     private final double _HEALTH_BUFF_MAX_HP = 100.0d;
+
+    /**
+     * Skin to use when there is none
+     */
+    private final String _DEFAULT_SKIN_USERNAME = "MHF_Steve";
 
     // Optional SoulIngredients
     private Skin _skin = null;
@@ -244,16 +243,19 @@ public class MannequinSoul {
 
         if (getSkin() != null) {;
             mannequin.setCustomName(getSkin().getUsername());
-            mannequin.setCustomNameVisible(true);
             mannequin.setProfile(ResolvableProfile.resolvableProfile().name(getSkin().getUsername()).build());
+        } else {
+            mannequin.setCustomName(Strings.DEFAULT_MANNEQUIN_DISPLAY_NAME);
+            mannequin.setProfile(ResolvableProfile.resolvableProfile().name(_DEFAULT_SKIN_USERNAME).build());
         }
+        mannequin.setCustomNameVisible(true);
 
         if (hasHealthBuff()) {
             AttributeInstance maxHealthAttribute = mannequin.getAttribute(Attribute.MAX_HEALTH);
 
             if (maxHealthAttribute != null) {
-                maxHealthAttribute.setBaseValue(100.0);
-                mannequin.setHealth(100.0);
+                maxHealthAttribute.setBaseValue(_HEALTH_BUFF_MAX_HP);
+                mannequin.setHealth(_HEALTH_BUFF_MAX_HP);
             }
         }
 

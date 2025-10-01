@@ -14,4 +14,6 @@ public class Strings {
     public static final String SOUL_LORE_ANCHORED_LABEL = "Anchored";
 
     public static final String MANNEQUIN_EQUIPMENT_GUI_LABEL = "Mannequin Equipment";
+
+    public static final String DEFAULT_MANNEQUIN_DISPLAY_NAME = "Steve";
 }
