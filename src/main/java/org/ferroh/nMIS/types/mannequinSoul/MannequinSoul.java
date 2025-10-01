@@ -1,5 +1,6 @@
 package org.ferroh.nMIS.types.mannequinSoul;
 
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -7,7 +8,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
@@ -115,7 +116,7 @@ public class MannequinSoul {
             throw new IllegalArgumentException("ItemStack is not marked as a mannequin soul");
         }
 
-        ItemStack mannequinSoulItem = potentialMannequinSoulItem; // Rename for readability
+        ItemStack mannequinSoulItem = potentialMannequinSoulItem; // Renamed for readability
 
         // Optional fields
         String skinUsername = ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.SOUL_SKIN_USERNAME);
@@ -235,91 +236,27 @@ public class MannequinSoul {
 
         location = new Location(location.getWorld(), location.getX(), location.getY() + 1.0, location.getZ());
 
-        Zombie fakeMannequin = (Zombie) location.getWorld().spawnEntity(location, EntityType.ZOMBIE);
+        Mannequin mannequin = (Mannequin) location.getWorld().spawnEntity(location, EntityType.MANNEQUIN);
 
         if (isAnchored()) {
-            fakeMannequin.setAI(false);
+            mannequin.setImmovable(true);
         }
 
-        if (getSkin() != null) {
-            fakeMannequin.setCustomName(getSkin().getUsername());
-            fakeMannequin.setCustomNameVisible(true);
+        if (getSkin() != null) {;
+            mannequin.setCustomName(getSkin().getUsername());
+            mannequin.setCustomNameVisible(true);
+            mannequin.setProfile(ResolvableProfile.resolvableProfile().name(getSkin().getUsername()).build());
         }
 
         if (hasHealthBuff()) {
-            AttributeInstance maxHealthAttribute = fakeMannequin.getAttribute(Attribute.MAX_HEALTH);
+            AttributeInstance maxHealthAttribute = mannequin.getAttribute(Attribute.MAX_HEALTH);
 
             if (maxHealthAttribute != null) {
                 maxHealthAttribute.setBaseValue(100.0);
-                fakeMannequin.setHealth(100.0);
+                mannequin.setHealth(100.0);
             }
         }
 
-        return fakeMannequin;
-    }
-
-    /**
-     * Get the command to summon a mannequin based on this mannequin soul
-     * @param location Location to summon the mannequin at
-     * @return Mannequin summon command
-     */
-    public String getSummonCommand(Location location) {
-        if (location == null) {
-            return null;
-        }
-
-        return "summon minecraft:mannequin " +
-                location.getX() + " " +
-                location.getY() + " " +
-                location.getZ() + " " +
-                getMannequinNBT();
-    }
-
-    /**
-     * Get the mannequin summoning command NBT for this mannequin soul
-     * @return Summoning command NBT
-     */
-    private String getMannequinNBT() {
-        if (getSkin() == null && !hasHealthBuff()) {
-            return "";
-        }
-
-        StringBuilder nbtSB = new StringBuilder();
-
-        if (getSkin() != null) {
-            appendCommaIfNotEmpty(nbtSB);
-            nbtSB.append("profile:\"");
-            nbtSB.append(getSkin().getUsername());
-            nbtSB.append("\"");
-        }
-
-        if (isAnchored()) {
-            appendCommaIfNotEmpty(nbtSB);
-            nbtSB.append("immovable:true");
-        }
-
-        if (hasHealthBuff()) {
-            appendCommaIfNotEmpty(nbtSB);
-            nbtSB.append("attributes:[{id:max_health,base:");
-            nbtSB.append(_HEALTH_BUFF_MAX_HP);
-            nbtSB.append("}]");
-        }
-
-        nbtSB.insert(0, '{');
-        nbtSB.append('}');
-
-        return nbtSB.toString();
-    }
-
-    /**
-     * Appends a comma to a summoning command if the command is not empty
-     * @param sb StringBuilder for the summoning command
-     */
-    private void appendCommaIfNotEmpty(StringBuilder sb) {
-        if (sb == null || sb.isEmpty()) {
-            return;
-        }
-
-        sb.append(',');
+        return mannequin;
     }
 }

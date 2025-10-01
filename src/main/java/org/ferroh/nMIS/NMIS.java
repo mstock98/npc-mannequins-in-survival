@@ -9,10 +9,7 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.ferroh.nMIS.constants.RecipeConstants;
-import org.ferroh.nMIS.listeners.FetchPlayerProfileListener;
-import org.ferroh.nMIS.listeners.MannequinEquipListener;
-import org.ferroh.nMIS.listeners.MannequinSoulUseListener;
-import org.ferroh.nMIS.listeners.SoulCraftingPrepareListener;
+import org.ferroh.nMIS.listeners.*;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.listeners.MannequinEquipCloseListener;
 import org.ferroh.nMIS.types.gui.listeners.MannequinEquipClickDeadSlotListener;
@@ -28,6 +25,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Main plugin class for NPC Mannequins in Survival
@@ -43,15 +42,17 @@ public final class NMIS extends JavaPlugin {
      */
     private static HashMap<UUID, CommandState> _commandStateMap;
 
-    /**
-     * Map of all mannequins that have equipment GUIs open
-     */
-    private static List<UUID> _openMannequins;
+    private static ArrayList<UUID> _openMannequins;
 
     /**
      * bStats plugin ID (for metrics)
      */
     private static final int BSTATS_PLUGIN_ID = 27362;
+
+    // Earliest Minecraft version that this plugin can run
+    private final int _EARLIEST_MAJOR_VERSION = 1;
+    private final int _EARLIEST_MINOR_VERSION = 21;
+    private final int _EARLIEST_PATCH_VERSION = 9;
 
     /**
      * Logic to run when this plugin is enabled
@@ -59,9 +60,13 @@ public final class NMIS extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        if (!validateMinecraftVersion()) {
+            throw new IllegalStateException("This plugin is for Minecraft Java 1.21.9 or greater. Disabling...");
+        }
+
         _plugin = this;
 
-        Metrics metrics = new Metrics(getPlugin(), BSTATS_PLUGIN_ID);
+        new Metrics(getPlugin(), BSTATS_PLUGIN_ID);
 
         initSoulRecipe();
 
@@ -71,11 +76,13 @@ public final class NMIS extends JavaPlugin {
         // Register event listeners
         getServer().getPluginManager().registerEvents(new SoulCraftingPrepareListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinSoulUseListener(), getPlugin());
-        getServer().getPluginManager().registerEvents(new MannequinEquipListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinRightClickListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipCloseListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipClickDeadSlotListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new FetchPlayerProfileListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipDeadSlotMoveListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinDeathListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new OpenMannequinDamageListener(), getPlugin());
     }
 
     /**
@@ -127,22 +134,35 @@ public final class NMIS extends JavaPlugin {
     }
 
     /**
-     * Mark a particular mannequin as having their equipment GUI open/closed
+     * Mark a particular mannequin as having its equipment GUI open
      * @param mannequinID UUID of the mannequin entity
-     * @param isOpen True to mark the mannequin as open, false to mark the mannequin as closed
      */
-    public static void markMannequinAsOpen(UUID mannequinID, boolean isOpen) {
+    public static void markMannequinAsOpen(UUID mannequinID) {
         if (mannequinID == null) {
             throw new IllegalArgumentException("Mannequin ID cannot be null");
         }
 
-        if (isOpen) {
-            if (!_openMannequins.contains(mannequinID)) {
-                _openMannequins.add(mannequinID);
-            }
-        } else {
-            _openMannequins.remove(mannequinID);
+        if (_openMannequins.contains(mannequinID)) {
+            throw new IllegalStateException("Plugin attempted to open a mannequin that is already open. Please report this to https://github.com/mstock98/npc-mannequins-in-survival/issues");
         }
+
+        _openMannequins.add(mannequinID);
+    }
+
+    /**
+     * Mark a particular mannequin as having its equipment GUI closed
+     * @param mannequinID UUID of the mannequin entity
+     */
+    public static void markMannequinAsClosed(UUID mannequinID) {
+        if (mannequinID == null) {
+            throw new IllegalArgumentException("Mannequin ID cannot be null");
+        }
+
+        if (!_openMannequins.contains(mannequinID)) {
+            throw new IllegalStateException("Plugin attempted to close a mannequin that is already closed. Please report this to https://github.com/mstock98/npc-mannequins-in-survival/issues");
+        }
+
+        _openMannequins.remove(mannequinID);
     }
 
     /**
@@ -152,6 +172,38 @@ public final class NMIS extends JavaPlugin {
      */
     public static boolean isMannequinOpen(UUID mannequinID) {
         return _openMannequins.contains(mannequinID);
+    }
+
+    /**
+     * Determine whether the Minecraft version the server is running is high enough for this plugin to work
+     * @return True if the Minecraft server version is high enough
+     */
+    private boolean validateMinecraftVersion() {
+        String rawVersion = Bukkit.getServer().getVersion();
+
+        String versionRegex = "^(\\d+)\\.(\\d+)(?:\\.(\\d+))?";
+        Pattern versionPattern = Pattern.compile(versionRegex);
+        Matcher versionMatcher = versionPattern.matcher(rawVersion);
+
+        if (!versionMatcher.find()) {
+            return false;
+        }
+
+        int majorVersion = Integer.parseInt(versionMatcher.group(1));
+        int minorVersion = Integer.parseInt(versionMatcher.group(2));
+        int patchVersion = versionMatcher.group(3) != null ? Integer.parseInt(versionMatcher.group(3)) : 0;
+
+        if (majorVersion > _EARLIEST_MAJOR_VERSION) {
+            return true;
+        }
+
+        if (minorVersion > _EARLIEST_MINOR_VERSION) {
+            return true;
+        } else if (minorVersion < _EARLIEST_MINOR_VERSION) {
+            return false;
+        }
+
+        return patchVersion >= _EARLIEST_PATCH_VERSION;
     }
 
     /**

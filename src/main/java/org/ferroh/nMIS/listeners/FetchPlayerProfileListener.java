@@ -1,12 +1,12 @@
 package org.ferroh.nMIS.listeners;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.profile.PlayerProfile;
 import org.ferroh.nMIS.NMIS;
 import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
@@ -62,7 +62,7 @@ public class FetchPlayerProfileListener implements Listener {
      * @param username Username of the player profile to cache
      */
     private void fetchProfile(String username) {
-        PlayerProfile profile = Bukkit.createPlayerProfile(Bukkit.getOfflinePlayer(username).getUniqueId(), username);
+        PlayerProfile profile = (PlayerProfile) Bukkit.createPlayerProfile(Bukkit.getOfflinePlayer(username).getUniqueId(), username);
 
         profile.update()
                 .orTimeout(10, TimeUnit.SECONDS)

@@ -2,16 +2,14 @@ package org.ferroh.nMIS.types.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.ferroh.nMIS.NMIS;
 import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
 import org.ferroh.nMIS.helpers.ItemHelper;
-import org.ferroh.nMIS.types.CommandState;
 
 import java.util.UUID;
 
@@ -33,7 +31,7 @@ public class MannequinEquipGui {
     /**
      * Equipment object for the mannequin for this GUI
      */
-    private final Zombie _mannequin;
+    private final Mannequin _mannequin;
 
     /**
      * Inventory object for this GUI
@@ -41,15 +39,10 @@ public class MannequinEquipGui {
     private Inventory _inventory = null;
 
     /**
-     * Create a new MannequinEquipGui for a given mannequin equipment object and mannequin entity UUID
-     * @param mannequinEquipment Equipment items (inventory) that the mannequin has
+     * Create a new MannequinEquipGui for a given mannequin entity
      * @param mannequin The mannequin entity
      */
-    public MannequinEquipGui(EntityEquipment mannequinEquipment, Zombie mannequin) {
-        if (mannequinEquipment == null) {
-            throw new IllegalArgumentException("Mannequin equipment cannot be null");
-        }
-
+    public MannequinEquipGui(Mannequin mannequin) {
         if (mannequin == null) {
             throw new IllegalArgumentException("Mannequin entity cannot be null");
         }
@@ -103,10 +96,6 @@ public class MannequinEquipGui {
         }
 
         player.openInventory(_inventory);
-
-        CommandState commandState = new CommandState(CommandState.Status.MANNEQUIN_EQUIPMENT_OPEN);
-        commandState.setEquipmentGui(this);
-        NMIS.setCommandStateForPlayer(player.getUniqueId(), commandState);
     }
 
     /**
@@ -137,7 +126,7 @@ public class MannequinEquipGui {
      * Get the mannequin entity associated with this GUI
      * @return Mannequin that is having its equipment changed via this GUI
      */
-    public Zombie getMannequin() {
+    public Mannequin getMannequin() {
         return _mannequin;
     }
 }

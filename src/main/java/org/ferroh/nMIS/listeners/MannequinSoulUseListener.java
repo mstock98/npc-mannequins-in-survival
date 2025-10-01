@@ -34,8 +34,6 @@ public class MannequinSoulUseListener implements Listener {
 
         mannequinSoul.spawn(e.getClickedBlock().getLocation());
 
-        System.out.println("Summon command: " + mannequinSoul.getSummonCommand(e.getClickedBlock().getLocation()));
-
         usedItem.setAmount(usedItem.getAmount() - 1);
     }
 }
