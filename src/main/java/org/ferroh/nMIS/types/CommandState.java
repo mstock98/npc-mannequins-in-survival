@@ -2,10 +2,17 @@ package org.ferroh.nMIS.types;
 
 import org.ferroh.nMIS.types.gui.MannequinEquipGui;
 
+import java.util.UUID;
+
 /**
  * Class representing player state across commands and events
  */
 public class CommandState {
+    /**
+     * Owner of this object
+     */
+    private UUID _owner;
+
     /**
      * Get the current status enum member
      */
@@ -19,9 +26,27 @@ public class CommandState {
     /**
      * Create a new command state object
      * @param status Status of the command state
+     * @param playerOwner UUID of the player that owns this object
      */
-    public CommandState(Status status) {
+    public CommandState(Status status, UUID playerOwner) {
         setStatus(status);
+        setOwner(playerOwner);
+    }
+
+    /**
+     * Get the player ID of the owner of this state object
+     * @return UUID of owner
+     */
+    public UUID getOwner() {
+        return _owner;
+    }
+
+    /**
+     * Set the player ID of the owner of this state object
+     * @param owner UUID of owner
+     */
+    private void setOwner(UUID owner) {
+        _owner = owner;
     }
 
     /**

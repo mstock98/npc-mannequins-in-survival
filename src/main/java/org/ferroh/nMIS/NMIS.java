@@ -4,6 +4,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -42,7 +43,10 @@ public final class NMIS extends JavaPlugin {
      */
     private static HashMap<UUID, CommandState> _commandStateMap;
 
-    private static ArrayList<UUID> _openMannequins;
+    /**
+     * Open mannequins by command state
+     */
+    private static HashMap<UUID, CommandState> _openMannequins;
 
     /**
      * bStats plugin ID (for metrics)
@@ -71,7 +75,7 @@ public final class NMIS extends JavaPlugin {
         initSoulRecipe();
 
         _commandStateMap = new HashMap<>();
-        _openMannequins = new ArrayList<>();
+        _openMannequins = new HashMap<>();
 
         // Register event listeners
         getServer().getPluginManager().registerEvents(new SoulCraftingPrepareListener(), getPlugin());
@@ -84,6 +88,7 @@ public final class NMIS extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MannequinDeathListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new OpenMannequinDamageListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinSoulCrafterListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinUnloadEvent(), getPlugin());
     }
 
     /**
@@ -137,17 +142,18 @@ public final class NMIS extends JavaPlugin {
     /**
      * Mark a particular mannequin as having its equipment GUI open
      * @param mannequinID UUID of the mannequin entity
+     * @param commandState Command state for mannequin
      */
-    public static void markMannequinAsOpen(UUID mannequinID) {
+    public static void markMannequinAsOpen(UUID mannequinID, CommandState commandState) {
         if (mannequinID == null) {
             throw new IllegalArgumentException("Mannequin ID cannot be null");
         }
 
-        if (_openMannequins.contains(mannequinID)) {
+        if (_openMannequins.containsKey(mannequinID)) {
             throw new IllegalStateException("Plugin attempted to open a mannequin that is already open. Please report this to https://github.com/mstock98/npc-mannequins-in-survival/issues");
         }
 
-        _openMannequins.add(mannequinID);
+        _openMannequins.put(mannequinID, commandState);
     }
 
     /**
@@ -159,7 +165,7 @@ public final class NMIS extends JavaPlugin {
             throw new IllegalArgumentException("Mannequin ID cannot be null");
         }
 
-        if (!_openMannequins.contains(mannequinID)) {
+        if (!_openMannequins.containsKey(mannequinID)) {
             throw new IllegalStateException("Plugin attempted to close a mannequin that is already closed. Please report this to https://github.com/mstock98/npc-mannequins-in-survival/issues");
         }
 
@@ -172,7 +178,20 @@ public final class NMIS extends JavaPlugin {
      * @return True if the mannequin has its equipment GUI open
      */
     public static boolean isMannequinOpen(UUID mannequinID) {
-        return _openMannequins.contains(mannequinID);
+        return _openMannequins.containsKey(mannequinID);
+    }
+
+    /**
+     * Get the command state object for a mannequin if it has its equipment open
+     * @param mannequin Mannequin to get command state object for
+     * @return Command state object, or null if mannequin is not open
+     */
+    public static CommandState getCommandStateForMannequin(Mannequin mannequin) {
+        if (mannequin == null) {
+            return null;
+        }
+
+        return _openMannequins.get(mannequin.getUniqueId());
     }
 
     /**

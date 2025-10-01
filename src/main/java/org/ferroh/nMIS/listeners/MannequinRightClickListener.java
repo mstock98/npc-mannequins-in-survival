@@ -51,11 +51,11 @@ public class MannequinRightClickListener implements Listener {
 
         MannequinEquipGui gui = new MannequinEquipGui(mannequin);
 
-        CommandState commandState = new CommandState(CommandState.Status.MANNEQUIN_EQUIPMENT_OPEN);
+        CommandState commandState = new CommandState(CommandState.Status.MANNEQUIN_EQUIPMENT_OPEN, e.getPlayer().getUniqueId());
         commandState.setEquipmentGui(gui);
         NMIS.setCommandStateForPlayer(e.getPlayer().getUniqueId(), commandState);
 
-        NMIS.markMannequinAsOpen(clickedEntity.getUniqueId());
+        NMIS.markMannequinAsOpen(clickedEntity.getUniqueId(), commandState);
 
         gui.display(e.getPlayer());
     }
