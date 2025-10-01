@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.CraftingRecipe;
 import org.bukkit.inventory.ItemStack;
-import org.ferroh.nMIS.constants.RecipeConstants;
+import org.ferroh.nMIS.constants.RecipeKeys;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 
 /**
@@ -22,7 +22,7 @@ public class SoulCraftingPrepareListener implements Listener {
             return;
         }
 
-        if (!craftingRecipe.getKey().getKey().startsWith(RecipeConstants.SOUL_RECIPE_KEY_PREFIX)) {
+        if (!RecipeKeys.isSoulRecipeKey(craftingRecipe.getKey())) {
             return;
         }
 

@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.ferroh.nMIS.constants.RecipeConstants;
+import org.ferroh.nMIS.constants.RecipeKeys;
 import org.ferroh.nMIS.listeners.*;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.listeners.MannequinEquipCloseListener;
@@ -83,6 +83,7 @@ public final class NMIS extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MannequinEquipDeadSlotMoveListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinDeathListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new OpenMannequinDamageListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinSoulCrafterListener(), getPlugin());
     }
 
     /**
@@ -221,7 +222,7 @@ public final class NMIS extends JavaPlugin {
         ItemStack dummyResult = new ItemStack(new MannequinSoul().getMaterial()); // Actual result is set later in SoulCraftingPrepareListener
 
         for (int i = 0; i <= OPTIONAL_INGREDIENTS.size(); i++) {
-            NamespacedKey recipeKey = new NamespacedKey(NMIS.getPlugin(), RecipeConstants.SOUL_RECIPE_KEY_PREFIX + i);
+            NamespacedKey recipeKey = RecipeKeys.getSoulRecipeKey(i);
 
             ShapelessRecipe soulRecipe = new ShapelessRecipe(recipeKey, dummyResult);
             soulRecipe.addIngredient(soulStarterChoice);
