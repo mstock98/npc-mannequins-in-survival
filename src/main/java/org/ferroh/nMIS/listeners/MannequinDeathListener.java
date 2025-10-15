@@ -9,6 +9,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.helpers.ItemHelper;
+import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 
 /**
  * Listener class to drop mannequin equipment on mannequin death
@@ -39,5 +40,14 @@ public class MannequinDeathListener implements Listener {
         if (!ItemHelper.isNullOrAir(equipment.getItemInOffHand())) {
             deathWorld.dropItem(deathLocation, equipment.getItemInOffHand());
         }
+
+        MannequinSoul mannequinSoul;
+        try {
+            mannequinSoul = new MannequinSoul(mannequin);
+        } catch (IllegalArgumentException ex) {
+            return;
+        }
+
+        deathWorld.dropItem(deathLocation, mannequinSoul.toItemStack());
     }
 }

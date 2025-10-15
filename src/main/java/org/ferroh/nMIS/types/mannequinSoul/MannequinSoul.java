@@ -4,6 +4,7 @@ import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Mannequin;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
+import org.ferroh.nMIS.helpers.EntityHelper;
 import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.*;
 
@@ -128,6 +130,29 @@ public class MannequinSoul {
         }
 
         if (ItemHelper.getPersistentBooleanDataDefaultFalse(mannequinSoulItem, PersistentDataKeys.SOUL_IS_ANCHORED)) {
+            _anchor = new Anchor();
+        }
+    }
+
+    /**
+     * Create a mannequin soul from a Mannequin
+     * @param mannequin Mannequin to create soul from
+     */
+    public MannequinSoul(Mannequin mannequin) {
+        if (mannequin == null) {
+            throw new IllegalArgumentException("Mannequin entity cannot be null");
+        }
+
+        String skinUsername = EntityHelper.getPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_SKIN_USERNAME);
+        if (skinUsername != null) {
+            _skin = new Skin(skinUsername);
+        }
+
+        if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_HAS_HEALTH_BUFF)) {
+            _healthBuff = new HealthBuff();
+        }
+
+        if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED)) {
             _anchor = new Anchor();
         }
     }
@@ -257,6 +282,19 @@ public class MannequinSoul {
                 maxHealthAttribute.setBaseValue(_HEALTH_BUFF_MAX_HP);
                 mannequin.setHealth(_HEALTH_BUFF_MAX_HP);
             }
+        }
+
+        // Set persistent data so that the mannequin entity can be converted back to a MannequinSoul
+        if (getSkin() != null) {
+            EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_SKIN_USERNAME, getSkin().getUsername());
+        }
+
+        if (hasHealthBuff()) {
+            EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_HAS_HEALTH_BUFF, hasHealthBuff());
+        }
+
+        if (isAnchored()) {
+            EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, isAnchored());
         }
 
         return mannequin;
