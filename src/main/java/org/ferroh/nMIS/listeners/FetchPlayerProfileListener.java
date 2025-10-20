@@ -58,10 +58,23 @@ public class FetchPlayerProfileListener implements Listener {
     }
 
     /**
+     * Check whether a player profile is cached
+     * @param username Username of the player profile
+     * @return True if the profile belonging to the username is cached
+     */
+    public static boolean isPlayerProfileCached(String username) {
+        if (_playerProfileMap == null) {
+            return false;
+        }
+
+        return _playerProfileMap.containsKey(username);
+    }
+
+    /**
      * Cache the player profile for a given username
      * @param username Username of the player profile to cache
      */
-    private void fetchProfile(String username) {
+    public static void fetchProfile(String username) {
         PlayerProfile profile = (PlayerProfile) Bukkit.createPlayerProfile(Bukkit.getOfflinePlayer(username).getUniqueId(), username);
 
         profile.update()

@@ -10,6 +10,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.NMIS;
+import org.ferroh.nMIS.constants.PersistentDataKeys;
+import org.ferroh.nMIS.helpers.EntityHelper;
 import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.MannequinEquipGui;
@@ -40,7 +42,9 @@ public class MannequinRightClickListener implements Listener {
             mannequin.setPose(getNextPose(mannequin.getPose()));
             return;
         } else if (heldItem.getType().equals(Material.NAME_TAG)) {
-            mannequin.setCustomName(ItemHelper.getDisplayName(heldItem));
+            String nameTagName = ItemHelper.getDisplayName(heldItem);
+            mannequin.setCustomName(nameTagName);
+            EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, nameTagName);
             heldItem.setAmount(heldItem.getAmount() - 1);
             return;
         }

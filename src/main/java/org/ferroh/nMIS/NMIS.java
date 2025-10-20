@@ -89,6 +89,7 @@ public final class NMIS extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new OpenMannequinDamageListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinSoulCrafterListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinUnloadEvent(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinDamageEvent(), getPlugin());
     }
 
     /**

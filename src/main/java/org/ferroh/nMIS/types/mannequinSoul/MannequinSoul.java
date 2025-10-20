@@ -1,6 +1,7 @@
 package org.ferroh.nMIS.types.mannequinSoul;
 
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
+import net.kyori.adventure.key.Key;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * Class representing a mannequin in item form
  */
+@SuppressWarnings("UnstableApiUsage")
 public class MannequinSoul {
     /**
      * Amount of HP that HealthBuff should grant
@@ -38,6 +40,11 @@ public class MannequinSoul {
     private Skin _skin = null;
     private HealthBuff _healthBuff = null;
     private Anchor _anchor = null;
+
+    /**
+     * Display name set by using a name tag on a mannequin entity
+     */
+    private String _displayName;
 
     /**
      * Create a new MannequinSoul not based on any ItemStack or crafting matrix
@@ -119,6 +126,8 @@ public class MannequinSoul {
 
         ItemStack mannequinSoulItem = potentialMannequinSoulItem; // Renamed for readability
 
+        setDisplayName(ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME));
+
         // Optional fields
         String skinUsername = ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.SOUL_SKIN_USERNAME);
         if (skinUsername != null && !skinUsername.isEmpty()) {
@@ -155,6 +164,11 @@ public class MannequinSoul {
         if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED)) {
             _anchor = new Anchor();
         }
+
+        String displayName = EntityHelper.getPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME);
+        if (displayName != null && !displayName.isEmpty()) {
+            setDisplayName(displayName);
+        }
     }
 
     /**
@@ -179,6 +193,8 @@ public class MannequinSoul {
         if (isAnchored()) {
             ItemHelper.setPersistentBooleanData(itemStack, PersistentDataKeys.SOUL_IS_ANCHORED, true);
         }
+
+        ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, getDisplayName());
 
         // Set display info
         ItemHelper.setDisplayName(itemStack, Strings.SOUL_NAME);
@@ -217,6 +233,30 @@ public class MannequinSoul {
      */
     public Material getMaterial() {
         return Material.PLAYER_HEAD;
+    }
+
+    /**
+     * Get the name that will display above the mannequin's head
+     * @return Mannequin display name
+     */
+    public String getDisplayName() {
+        if (_displayName != null && !_displayName.isEmpty()) {
+            return _displayName;
+        }
+
+        if (getSkin() != null && getSkin().getUsername() != null && !getSkin().getUsername().isEmpty()) {
+            return getSkin().getUsername();
+        }
+
+        return Strings.DEFAULT_MANNEQUIN_DISPLAY_NAME;
+    }
+
+    /**
+     * Set the name that will display above the mannequin's head
+     * @param displayName Mannequin display name
+     */
+    public void setDisplayName(String displayName) {
+        _displayName = displayName;
     }
 
     /**
@@ -267,12 +307,27 @@ public class MannequinSoul {
         }
 
         if (getSkin() != null) {;
-            mannequin.setCustomName(getSkin().getUsername());
             mannequin.setProfile(ResolvableProfile.resolvableProfile().name(getSkin().getUsername()).build());
+
+            /*ResolvableProfile profile = ResolvableProfile.resolvableProfile().name(getSkin().getUsername()).build();
+
+            ResolvableProfile.SkinPatchBuilder skinPatchBuilder = ResolvableProfile.SkinPatch.skinPatch();
+            skinPatchBuilder.body(profile.skinPatch().body());
+            skinPatchBuilder.cape(profile.skinPatch().cape());
+            skinPatchBuilder.elytra(profile.skinPatch().elytra());
+            skinPatchBuilder.model(profile.skinPatch().model());
+
+            ResolvableProfile.Builder staticProfileBuilder = ResolvableProfile.resolvableProfile();
+            staticProfileBuilder.skinPatch(skinPatchBuilder.build());
+
+            mannequin.setProfile(staticProfileBuilder.build());*/
+
         } else {
             mannequin.setCustomName(Strings.DEFAULT_MANNEQUIN_DISPLAY_NAME);
             mannequin.setProfile(ResolvableProfile.resolvableProfile().name(_DEFAULT_SKIN_USERNAME).build());
         }
+
+        mannequin.setCustomName(getDisplayName());
         mannequin.setCustomNameVisible(true);
 
         if (hasHealthBuff()) {
@@ -296,6 +351,8 @@ public class MannequinSoul {
         if (isAnchored()) {
             EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, isAnchored());
         }
+
+        EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, getDisplayName());
 
         return mannequin;
     }

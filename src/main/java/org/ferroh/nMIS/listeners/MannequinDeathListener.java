@@ -41,6 +41,7 @@ public class MannequinDeathListener implements Listener {
             deathWorld.dropItem(deathLocation, equipment.getItemInOffHand());
         }
 
+        // TODO: Cache head skin before this
         MannequinSoul mannequinSoul;
         try {
             mannequinSoul = new MannequinSoul(mannequin);
