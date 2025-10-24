@@ -7,8 +7,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.profile.PlayerProfile;
-import org.ferroh.nMIS.listeners.FetchPlayerProfileListener;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.Skin;
 
 import java.util.List;
@@ -228,23 +226,16 @@ public class ItemHelper {
     }
 
     /**
-     * Set the player skin to use for a player head ItemStack.
-     * Player skin must be cached first, see FetchPlayerProfileListener.java
-     * @param playerHead Player head item stack to set the player skin on
-     * @param skinUsername Username of the player skin to set on the player head
+     * Set a player head to use the specified player skin
+     * @param playerHead Head to apply skin to
+     * @param skin Skin to apply to the player head
      */
-    public static void setPlayerHeadSkinFromCache(ItemStack playerHead, String skinUsername) {
+    public static void setPlayerHeadSkin(ItemStack playerHead, Skin skin) {
         if (playerHead == null || playerHead.getType() != Material.PLAYER_HEAD) {
             return;
         }
 
-        if (!Skin.usernameIsValid(skinUsername)) {
-            return;
-        }
-
-        PlayerProfile profile = FetchPlayerProfileListener.getCachedPlayerProfile(skinUsername);
-
-        if (profile == null) {
+        if (skin == null) {
             return;
         }
 
@@ -254,7 +245,7 @@ public class ItemHelper {
             return;
         }
 
-        meta.setOwnerProfile(profile);
+        meta.setOwnerProfile(skin.getStaticProfile());
 
         playerHead.setItemMeta(meta);
     }

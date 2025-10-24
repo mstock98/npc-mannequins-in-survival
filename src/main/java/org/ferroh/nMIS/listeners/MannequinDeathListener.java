@@ -25,6 +25,8 @@ public class MannequinDeathListener implements Listener {
             return;
         }
 
+        // TODO: Add failsafe to not drop items if mannequin is open
+        // Usually if a mannequin is open it is invulnerable from death, but maybe some plugin that I'm not thinking of allows people to bypass this
         EntityEquipment equipment = mannequin.getEquipment();
         Location deathLocation = e.getEntity().getLocation();
         World deathWorld = deathLocation.getWorld();
@@ -41,7 +43,6 @@ public class MannequinDeathListener implements Listener {
             deathWorld.dropItem(deathLocation, equipment.getItemInOffHand());
         }
 
-        // TODO: Cache head skin before this
         MannequinSoul mannequinSoul;
         try {
             mannequinSoul = new MannequinSoul(mannequin);

@@ -1,11 +1,9 @@
 package org.ferroh.nMIS.types.mannequinSoul;
 
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
-import net.kyori.adventure.key.Key;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
@@ -129,10 +127,9 @@ public class MannequinSoul {
         setDisplayName(ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME));
 
         // Optional fields
-        String skinUsername = ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.SOUL_SKIN_USERNAME);
-        if (skinUsername != null && !skinUsername.isEmpty()) {
-            _skin = new Skin(skinUsername);
-        }
+        String staticTexture = ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.MANNEQUIN_STATIC_TEXTURE);
+        String skinUsername = ItemHelper.getPersistentStringData(mannequinSoulItem, PersistentDataKeys.SKIN_USERNAME);
+        _skin = new Skin(staticTexture, skinUsername);
 
         if (ItemHelper.getPersistentBooleanDataDefaultFalse(mannequinSoulItem, PersistentDataKeys.SOUL_HAS_HEALTH_BUFF)) {
             _healthBuff = new HealthBuff();
@@ -152,10 +149,9 @@ public class MannequinSoul {
             throw new IllegalArgumentException("Mannequin entity cannot be null");
         }
 
-        String skinUsername = EntityHelper.getPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_SKIN_USERNAME);
-        if (skinUsername != null) {
-            _skin = new Skin(skinUsername);
-        }
+        String staticTexture = EntityHelper.getPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_STATIC_TEXTURE);
+        String skinUsername = EntityHelper.getPersistentStringData(mannequin, PersistentDataKeys.SKIN_USERNAME);
+        _skin = new Skin(staticTexture, skinUsername);
 
         if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_HAS_HEALTH_BUFF)) {
             _healthBuff = new HealthBuff();
@@ -177,14 +173,14 @@ public class MannequinSoul {
      */
     public ItemStack toItemStack() {
         ItemStack itemStack = new ItemStack(getMaterial());
+        ItemHelper.setPlayerHeadSkin(itemStack, getSkin());
 
         // Populate persistent data
         ItemHelper.setPersistentBooleanData(itemStack, PersistentDataKeys.IS_MANNEQUIN_SOUL, true);
 
-        if (getSkin() != null) {
-            ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.SOUL_SKIN_USERNAME, getSkin().getUsername());
-            ItemHelper.setPlayerHeadSkinFromCache(itemStack, getSkin().getUsername());
-        }
+        ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.SKIN_USERNAME, getSkin().getUsername());
+
+        ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.MANNEQUIN_STATIC_TEXTURE, getSkin().getStaticTexture());
 
         if (hasHealthBuff()) {
             ItemHelper.setPersistentBooleanData(itemStack, PersistentDataKeys.SOUL_HAS_HEALTH_BUFF, true);
@@ -208,6 +204,10 @@ public class MannequinSoul {
      * @return Skin ingredient
      */
     public Skin getSkin() {
+        if (_skin == null) {
+            return Skin.STEVE;
+        }
+
         return _skin;
     }
 
@@ -244,7 +244,7 @@ public class MannequinSoul {
             return _displayName;
         }
 
-        if (getSkin() != null && getSkin().getUsername() != null && !getSkin().getUsername().isEmpty()) {
+        if (getSkin().getUsername() != null && !getSkin().getUsername().isEmpty()) {
             return getSkin().getUsername();
         }
 
@@ -268,9 +268,7 @@ public class MannequinSoul {
 
         lore.add(ChatColor.WHITE + Strings.SOUL_LORE_INSTRUCTIONS_HEADER);
 
-        if (getSkin() != null) {
-            lore.add(ChatColor.YELLOW + Strings.SOUL_LORE_PROFILE_LABEL + getSkin().getUsername());
-        }
+        lore.add(ChatColor.YELLOW + Strings.SOUL_LORE_PROFILE_LABEL + getSkin().getUsername());
 
         if (hasHealthBuff()) {
             lore.add(ChatColor.DARK_RED + Strings.SOUL_LORE_HEALTH_BUFF_LABEL);
@@ -306,26 +304,8 @@ public class MannequinSoul {
             mannequin.setImmovable(true);
         }
 
-        if (getSkin() != null) {;
-            mannequin.setProfile(ResolvableProfile.resolvableProfile().name(getSkin().getUsername()).build());
-
-            /*ResolvableProfile profile = ResolvableProfile.resolvableProfile().name(getSkin().getUsername()).build();
-
-            ResolvableProfile.SkinPatchBuilder skinPatchBuilder = ResolvableProfile.SkinPatch.skinPatch();
-            skinPatchBuilder.body(profile.skinPatch().body());
-            skinPatchBuilder.cape(profile.skinPatch().cape());
-            skinPatchBuilder.elytra(profile.skinPatch().elytra());
-            skinPatchBuilder.model(profile.skinPatch().model());
-
-            ResolvableProfile.Builder staticProfileBuilder = ResolvableProfile.resolvableProfile();
-            staticProfileBuilder.skinPatch(skinPatchBuilder.build());
-
-            mannequin.setProfile(staticProfileBuilder.build());*/
-
-        } else {
-            mannequin.setCustomName(Strings.DEFAULT_MANNEQUIN_DISPLAY_NAME);
-            mannequin.setProfile(ResolvableProfile.resolvableProfile().name(_DEFAULT_SKIN_USERNAME).build());
-        }
+        mannequin.setProfile(ResolvableProfile.resolvableProfile(getSkin().getStaticProfile()));
+        EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_STATIC_TEXTURE, getSkin().getStaticTexture());
 
         mannequin.setCustomName(getDisplayName());
         mannequin.setCustomNameVisible(true);
@@ -340,8 +320,8 @@ public class MannequinSoul {
         }
 
         // Set persistent data so that the mannequin entity can be converted back to a MannequinSoul
-        if (getSkin() != null) {
-            EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_SKIN_USERNAME, getSkin().getUsername());
+        if (getSkin().getUsername() != null) {
+            EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.SKIN_USERNAME, getSkin().getUsername());
         }
 
         if (hasHealthBuff()) {

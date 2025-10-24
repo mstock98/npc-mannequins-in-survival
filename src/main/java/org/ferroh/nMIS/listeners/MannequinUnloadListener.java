@@ -13,7 +13,7 @@ import org.ferroh.nMIS.types.CommandState;
 /**
  * Listener class for when mannequins are unloaded
  */
-public class MannequinUnloadEvent implements Listener {
+public class MannequinUnloadListener implements Listener {
     /**
      * Main event handler
      * @param e Event to handle
@@ -28,8 +28,6 @@ public class MannequinUnloadEvent implements Listener {
             if (!NMIS.isMannequinOpen(mannequin.getUniqueId())) {
                 continue;
             }
-
-            System.out.println(mannequin.getEquipment());
 
             CommandState commandState = NMIS.getCommandStateForMannequin(mannequin);
 

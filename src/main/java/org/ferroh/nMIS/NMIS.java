@@ -24,7 +24,6 @@ import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.SoulStarter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -83,13 +82,12 @@ public final class NMIS extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MannequinRightClickListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipCloseListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipClickDeadSlotListener(), getPlugin());
-        getServer().getPluginManager().registerEvents(new FetchPlayerProfileListener(), getPlugin());
+        getServer().getPluginManager().registerEvents(new NameTagClickSkinCacheListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinEquipDeadSlotMoveListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinDeathListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new OpenMannequinDamageListener(), getPlugin());
         getServer().getPluginManager().registerEvents(new MannequinSoulCrafterListener(), getPlugin());
-        getServer().getPluginManager().registerEvents(new MannequinUnloadEvent(), getPlugin());
-        getServer().getPluginManager().registerEvents(new MannequinDamageEvent(), getPlugin());
+        getServer().getPluginManager().registerEvents(new MannequinUnloadListener(), getPlugin());
     }
 
     /**
