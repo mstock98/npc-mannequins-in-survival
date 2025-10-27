@@ -165,20 +165,24 @@ public class Skin extends SoulIngredient {
      * asynchronously from Minecraft/Mojang and cache that information.
      */
     public void cacheProfileAsync() {
-        if (getUsername() == null) {
+        if (!usernameIsValid(getUsername())) {
             return;
         }
 
-        PlayerProfile profile = Bukkit.createProfile(Bukkit.getOfflinePlayer(getUsername()).getUniqueId(), getUsername());
+        if (_profileCache == null) {
+            _profileCache = new HashMap<>();
+        }
+
+        PlayerProfile profile = _profileCache.get(getUsername());
+
+        if (profile == null) {
+            profile = Bukkit.createProfile(Bukkit.getOfflinePlayer(getUsername()).getUniqueId(), getUsername());
+        }
 
         profile.update()
                 .orTimeout(10, TimeUnit.SECONDS)
                 .whenComplete((updatedProfile, ex) -> {
                     Bukkit.getScheduler().runTask(NMIS.getPlugin(), () -> {
-                        if (_profileCache == null) {
-                            _profileCache = new HashMap<>();
-                        }
-
                         _profileCache.remove(getUsername());
 
                         _profileCache.put(getUsername(), updatedProfile);
