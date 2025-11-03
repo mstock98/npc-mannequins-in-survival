@@ -13,7 +13,7 @@ public class EntityHelper {
      * Get the persistent string data stored in an Entity by the NamespacedKey
      * @param entity Entity that has the persistent data
      * @param key NamespacedKey by which the data is stored
-     * @return Persistent string data stored in the item or null if no data is stored by the key
+     * @return Persistent string data stored in the entity or null if no data is stored by the key
      */
     public static String getPersistentStringData(Entity entity, NamespacedKey key) {
         if (entity == null || key == null) {
@@ -35,15 +35,43 @@ public class EntityHelper {
             return;
         }
 
-        PersistentDataContainer persistentDataContainer = entity.getPersistentDataContainer();
-        persistentDataContainer.set(key, PersistentDataType.STRING, data);
+        entity.getPersistentDataContainer().set(key, PersistentDataType.STRING, data);
+    }
+
+    /**
+     * Get the persistent integer data stored in an Entity by the NamespacedKey
+     * @param entity Entity that has the persistent data
+     * @param key NamespacedKey by which the data is stored
+     * @return Persistent integer data stored in the entity or null if no data is stored by the key
+     */
+    public static Integer getPersistentIntegerData(Entity entity, NamespacedKey key) {
+        if (entity == null || key == null) {
+            return null;
+        }
+
+        return entity.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
+    }
+
+    /**
+     * Set the persistent integer data stored in an Entity by the NamespacedKey
+     * Does nothing if either param is null.
+     * @param entity Entity to store the persistent data in
+     * @param key NamespacedKey for the persistent data to store
+     * @param data Persistent integer data to store
+     */
+    public static void setPersistentIntegerData(Entity entity, NamespacedKey key, int data) {
+        if (entity == null || key == null) {
+            return;
+        }
+
+        entity.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, data);
     }
 
     /**
      * Get the persistent boolean data stored in an Entity by the NamespacedKey
      * @param entity Entity that has the persistent data
      * @param key NamespacedKey by which the data is stored
-     * @return Persistent boolean data stored in the item or null if no data is stored by the key
+     * @return Persistent boolean data stored in the entity or null if no data is stored by the key
      */
     public static boolean getPersistentBooleanData(Entity entity, NamespacedKey key) {
         if (entity == null || key == null) {
@@ -63,7 +91,7 @@ public class EntityHelper {
      * Get the persistent boolean data stored in an Entity by the NamespacedKey
      * @param entity Entity that has the persistent data
      * @param key NamespacedKey by which the data is stored
-     * @return Persistent string data stored in the item or false if no data is stored by the key
+     * @return Persistent string data stored in the entity or false if no data is stored by the key
      */
     public static boolean getPersistentBooleanDataDefaultFalse(Entity entity, NamespacedKey key) {
         boolean data;

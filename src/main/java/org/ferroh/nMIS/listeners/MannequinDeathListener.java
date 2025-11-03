@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.ferroh.nMIS.NMIS;
 import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 
@@ -25,8 +26,12 @@ public class MannequinDeathListener implements Listener {
             return;
         }
 
-        // TODO: Add failsafe to not drop items if mannequin is open
+        // Failsafe to prevent item dupes for open mannequins
         // Usually if a mannequin is open it is invulnerable from death, but maybe some plugin that I'm not thinking of allows people to bypass this
+        if (NMIS.isMannequinOpen(mannequin.getUniqueId())) {
+            return;
+        }
+
         EntityEquipment equipment = mannequin.getEquipment();
         Location deathLocation = e.getEntity().getLocation();
         World deathWorld = deathLocation.getWorld();

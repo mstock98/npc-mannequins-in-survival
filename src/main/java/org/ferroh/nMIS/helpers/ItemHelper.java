@@ -1,7 +1,11 @@
 package org.ferroh.nMIS.helpers;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -248,5 +252,56 @@ public class ItemHelper {
         meta.setOwnerProfile(skin.getStaticProfile());
 
         playerHead.setItemMeta(meta);
+    }
+
+    /**
+     * Determine if an ItemStack is an anvil of any damage
+     * @param potentialAnvil ItemStack to check for anvil membership
+     * @return True if the passed in ItemStack is an anvil
+     */
+    public static boolean isAnvil(ItemStack potentialAnvil) {
+        if (potentialAnvil == null) {
+            return false;
+        }
+
+        Material material = potentialAnvil.getType();
+
+        switch (material) {
+            case Material.ANVIL, Material.CHIPPED_ANVIL, Material.DAMAGED_ANVIL -> {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Give the player an ItemStack. If the player's inventory is full, drop that ItemStack on the ground.
+     * @param player Player to give item to
+     * @param item ItemStack to give
+     */
+    public static void addToInventoryOrDropOnGround(Player player, ItemStack item) {
+        Inventory inventory = player.getInventory();
+
+        if (inventory.firstEmpty() != -1) {
+            inventory.addItem(item);
+        } else {
+            dropItemStackOnGround(item, player.getLocation().add(0.0, 1.0, 0.0));
+        }
+    }
+
+    /**
+     * Drop the ItemStack on the ground at the specified location.
+     * @param item ItemStack to drop
+     * @param itemDropLocation Place to drop the ItemStack
+     */
+    public static void dropItemStackOnGround(ItemStack item, Location itemDropLocation) {
+        World dimension = itemDropLocation.getWorld();
+
+        if (dimension == null) {
+            return;
+        }
+
+        dimension.dropItem(itemDropLocation, item);
     }
 }

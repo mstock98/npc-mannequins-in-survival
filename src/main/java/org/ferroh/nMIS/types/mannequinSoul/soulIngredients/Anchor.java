@@ -2,6 +2,7 @@ package org.ferroh.nMIS.types.mannequinSoul.soulIngredients;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.ferroh.nMIS.helpers.ItemHelper;
 
 /**
  * Soul ingredient class for the Anchor.
@@ -28,7 +29,7 @@ public class Anchor extends SoulIngredient {
             throw new IllegalArgumentException("ItemStack is null");
         }
 
-        if (!matchesIngredientMaterial(itemStack)) {
+        if (!ItemHelper.isAnvil(itemStack)) {
             throw new IllegalArgumentException("Wrong material");
         }
 
@@ -37,6 +38,7 @@ public class Anchor extends SoulIngredient {
 
     /**
      * Return the material that represents this soul ingredient
+     * Chipped and damaged anvils are considered Anchors too, but the default will be a pristine anvil
      * @return Material for the soul ingredient
      */
     @Override

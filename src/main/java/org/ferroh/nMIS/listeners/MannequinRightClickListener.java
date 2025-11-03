@@ -7,6 +7,7 @@ import org.bukkit.entity.Pose;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.NMIS;
@@ -39,17 +40,23 @@ public class MannequinRightClickListener implements Listener {
         ItemStack heldItem = e.getPlayer().getInventory().getItemInMainHand();
 
         if (heldItem.getType().equals(Material.FEATHER)) {
-            mannequin.setPose(getNextPose(mannequin.getPose()));
-            return;
+            handlePoseChange(mannequin);
         } else if (heldItem.getType().equals(Material.NAME_TAG)) {
-            String nameTagName = ItemHelper.getDisplayName(heldItem);
-            mannequin.setCustomName(nameTagName);
-            EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, nameTagName);
-            heldItem.setAmount(heldItem.getAmount() - 1);
-            return;
+            handleNameTagRename(mannequin, heldItem);
+        } else if (ItemHelper.isAnvil(heldItem)) {
+            handleAnchorToggle(e, mannequin, heldItem);
+        } else {
+            handleEquipmentChange(e, mannequin);
         }
+    }
 
-        if (NMIS.isMannequinOpen(clickedEntity.getUniqueId()) || NMIS.getCommandStateForPlayer(e.getPlayer().getUniqueId()) != null) {
+    /**
+     * Opens the equipment change GUI for a mannequin to the player
+     * @param e Event for right-clicking the mannequin
+     * @param mannequin Mannequin that will have equipment modified
+     */
+    private void handleEquipmentChange(PlayerInteractEntityEvent e, Mannequin mannequin) {
+        if (NMIS.isMannequinOpen(mannequin.getUniqueId()) || NMIS.getCommandStateForPlayer(e.getPlayer().getUniqueId()) != null) {
             return;
         }
 
@@ -59,9 +66,43 @@ public class MannequinRightClickListener implements Listener {
         commandState.setEquipmentGui(gui);
         NMIS.setCommandStateForPlayer(e.getPlayer().getUniqueId(), commandState);
 
-        NMIS.markMannequinAsOpen(clickedEntity.getUniqueId(), commandState);
+        NMIS.markMannequinAsOpen(mannequin.getUniqueId(), commandState);
 
         gui.display(e.getPlayer());
+    }
+
+    // TODO: Add isOpen safeguard?
+    /**
+     * Cycle to the next pose for the given mannequin
+     * @param mannequin Mannequin that will have its pose changed
+     */
+    private void handlePoseChange(Mannequin mannequin) {
+        mannequin.setPose(getNextPose(mannequin.getPose()));
+    }
+
+    // TODO: Add isOpen safeguard?
+    /**
+     * Change the display name of a mannequin based on a name tag
+     * @param mannequin Mannequin that will have its display name changed
+     * @param nameTag Name tag with the display name to set for the mannequin
+     */
+    private void handleNameTagRename(Mannequin mannequin, ItemStack nameTag) {
+        String nameTagName = ItemHelper.getDisplayName(nameTag);
+        mannequin.setCustomName(nameTagName);
+        EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, nameTagName);
+        nameTag.setAmount(nameTag.getAmount() - 1);
+    }
+
+    // TODO: Add isOpen safeguard?
+    private void handleAnchorToggle(PlayerInteractEntityEvent e, Mannequin mannequin, ItemStack heldAnvil) {
+        if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED)) {
+            mannequin.setImmovable(false);
+            EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, false);
+        } else {
+            heldAnvil.setAmount(heldAnvil.getAmount() - 1);
+            mannequin.setImmovable(true);
+            EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, true);
+        }
     }
 
     /**
