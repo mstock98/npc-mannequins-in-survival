@@ -14,6 +14,10 @@ public class Anchor extends SoulIngredient {
      */
     private ItemStack _itemStack = null;
 
+    public static final Material MATERIAL_PRISTINE = Material.ANVIL;
+    public static final Material MATERIAL_CHIPPED = Material.CHIPPED_ANVIL;
+    public static final Material MATERIAL_DAMAGED = Material.DAMAGED_ANVIL;
+
     /**
      * Create a new Anchor not based on any ItemStack
      */

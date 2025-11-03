@@ -226,13 +226,15 @@ public final class NMIS extends JavaPlugin {
     }
 
     /**
-     * Initialize the crafting recipe for a mannequin sour
+     * Initialize the crafting recipe for a mannequin soul
      */
     private void initSoulRecipe() {
         final List<Material> OPTIONAL_INGREDIENTS = List.of(
                 new Skin("").getMaterial(),
                 new HealthBuff().getMaterial(),
-                new Anchor().getMaterial());
+                Anchor.MATERIAL_PRISTINE,
+                Anchor.MATERIAL_CHIPPED,
+                Anchor.MATERIAL_DAMAGED);
 
         RecipeChoice.MaterialChoice soulStarterChoice = new RecipeChoice.MaterialChoice(new SoulStarter().getMaterial());
         RecipeChoice.MaterialChoice optionalSoulIngredientChoice = new RecipeChoice.MaterialChoice(OPTIONAL_INGREDIENTS);

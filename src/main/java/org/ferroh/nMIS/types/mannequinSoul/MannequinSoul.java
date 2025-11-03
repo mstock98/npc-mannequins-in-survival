@@ -14,6 +14,7 @@ import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
 import org.ferroh.nMIS.helpers.EntityHelper;
 import org.ferroh.nMIS.helpers.ItemHelper;
+import org.ferroh.nMIS.helpers.MannequinHelper;
 import org.ferroh.nMIS.types.mannequinSoul.soulIngredients.*;
 
 import java.util.ArrayList;
@@ -136,7 +137,18 @@ public class MannequinSoul {
         }
 
         if (ItemHelper.getPersistentBooleanDataDefaultFalse(mannequinSoulItem, PersistentDataKeys.SOUL_IS_ANCHORED)) {
-            _anchor = new Anchor();
+            Integer anchorStateRaw = ItemHelper.getPersistentIntegerData(mannequinSoulItem, PersistentDataKeys.MANNEQUIN_ANCHOR_STATE);
+
+            MannequinHelper.AnchorState anchorState;
+            if (anchorStateRaw != null) {
+                anchorState = MannequinHelper.AnchorState.values()[anchorStateRaw];
+            } else {
+                anchorState = MannequinHelper.AnchorState.MISSING;
+            }
+
+            if (anchorState != MannequinHelper.AnchorState.MISSING) {
+                _anchor = new Anchor(MannequinHelper.anchorStateToItemStack(anchorState, 1));
+            }
         }
     }
 
@@ -158,7 +170,10 @@ public class MannequinSoul {
         }
 
         if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED)) {
-            _anchor = new Anchor();
+            // try-catch for when ItemStack for Anchor constructor is null because mannequin anchor state is missing
+            try {
+                _anchor = new Anchor(MannequinHelper.anchorStateToItemStack(MannequinHelper.getAnchorStateDefaultMissing(mannequin), 1));
+            } catch (IllegalArgumentException ignored) {}
         }
 
         String displayName = EntityHelper.getPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME);
@@ -188,6 +203,7 @@ public class MannequinSoul {
 
         if (isAnchored()) {
             ItemHelper.setPersistentBooleanData(itemStack, PersistentDataKeys.SOUL_IS_ANCHORED, true);
+            ItemHelper.setPersistentIntegerData(itemStack, PersistentDataKeys.MANNEQUIN_ANCHOR_STATE, MannequinHelper.itemStackToAnchorState(_anchor.toItemStack()).ordinal());
         }
 
         ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, getDisplayName());
@@ -302,6 +318,7 @@ public class MannequinSoul {
 
         if (isAnchored()) {
             mannequin.setImmovable(true);
+            mannequin.setNoPhysics(true);
         }
 
         mannequin.setProfile(ResolvableProfile.resolvableProfile(getSkin().getStaticProfile()));
@@ -330,6 +347,7 @@ public class MannequinSoul {
 
         if (isAnchored()) {
             EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, isAnchored());
+            MannequinHelper.setAnchorState(mannequin, MannequinHelper.itemStackToAnchorState(_anchor.toItemStack()));
         }
 
         EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, getDisplayName());

@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -109,6 +110,49 @@ public class ItemHelper {
         PersistentDataContainer persistentData = meta.getPersistentDataContainer();
 
         persistentData.set(key, PersistentDataType.STRING, stringData);
+
+        setItemMeta(item, meta);
+    }
+
+    /**
+     * Get the persistent integer data stored in an ItemStack by the NamespacedKey
+     * @param item ItemStack that has the persistent data
+     * @param key NamespacedKey by which the data is stored
+     * @return Persistent integer data stored in the ItemStack or null if no data is stored by the key
+     */
+    public static Integer getPersistentIntegerData(ItemStack item, NamespacedKey key) {
+        if (item == null || key == null) {
+            return null;
+        }
+
+        ItemMeta meta = getItemMeta(item);
+
+        if (meta == null) {
+            return null;
+        }
+
+        return meta.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
+    }
+
+    /**
+     * Set the persistent integer data stored in an ItemStack by the NamespacedKey
+     * Does nothing if either param is null.
+     * @param item ItemStack to store the persistent data in
+     * @param key NamespacedKey for the persistent data to store
+     * @param data Persistent integer data to store
+     */
+    public static void setPersistentIntegerData(ItemStack item, NamespacedKey key, int data) {
+        if (item == null || key == null) {
+            return;
+        }
+
+        ItemMeta meta = getItemMeta(item);
+
+        if (meta == null) {
+            return;
+        }
+
+        meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, data);
 
         setItemMeta(item, meta);
     }
@@ -281,6 +325,10 @@ public class ItemHelper {
      * @param item ItemStack to give
      */
     public static void addToInventoryOrDropOnGround(Player player, ItemStack item) {
+        if (item == null) {
+            return;
+        }
+
         Inventory inventory = player.getInventory();
 
         if (inventory.firstEmpty() != -1) {

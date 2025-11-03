@@ -49,6 +49,11 @@ public class Skin extends SoulIngredient {
     private String _staticTexture;
 
     /**
+     * Cached player profile created from _staticTexture
+     */
+    private PlayerProfile _staticProfile;
+
+    /**
      * Create a Skin object from a texture string
      * @param staticTexture Texture to use for this Skin. If null, the Steve texture will be used.
      */
@@ -148,16 +153,22 @@ public class Skin extends SoulIngredient {
 
     /**
      * Get a player profile based on the static texture set for this skin.
-     * Player profile will have a different UUID every time.
+     * Player profile will the same UUID every time.
      * @return PlayerProfile object with the static texture as its skin
      */
     public PlayerProfile getStaticProfile() {
+        if (_staticProfile != null) {
+            return _staticProfile;
+        }
+
         String staticTexture = getStaticTexture();
 
-        PlayerProfile staticProfile = Bukkit.createProfile(UUID.randomUUID(), null); // Random UUID since UUID value doesn't matter other than being non-null
+        PlayerProfile staticProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(getStaticTexture().getBytes()), null);
         staticProfile.setProperty(new ProfileProperty("textures", staticTexture));
 
-        return staticProfile;
+        _staticProfile = staticProfile; // Cache for later use
+
+        return _staticProfile;
     }
 
     /**

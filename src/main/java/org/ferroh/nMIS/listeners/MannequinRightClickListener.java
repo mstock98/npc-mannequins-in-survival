@@ -7,13 +7,13 @@ import org.bukkit.entity.Pose;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.NMIS;
 import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.helpers.EntityHelper;
 import org.ferroh.nMIS.helpers.ItemHelper;
+import org.ferroh.nMIS.helpers.MannequinHelper;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.MannequinEquipGui;
 
@@ -94,14 +94,26 @@ public class MannequinRightClickListener implements Listener {
     }
 
     // TODO: Add isOpen safeguard?
+    // TODO: Add sounds
+
+    /**
+     * Toggle the "Anchored" status for a mannequin
+     * @param e The PlayerInteractEntity event that needs to be handled
+     * @param mannequin The mannequin from the event
+     * @param heldAnvil The anvil that was held in the player's hand
+     */
     private void handleAnchorToggle(PlayerInteractEntityEvent e, Mannequin mannequin, ItemStack heldAnvil) {
         if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED)) {
             mannequin.setImmovable(false);
+            mannequin.setNoPhysics(false);
             EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, false);
+            ItemHelper.addToInventoryOrDropOnGround(e.getPlayer(), MannequinHelper.anchorStateToItemStack(MannequinHelper.getAnchorStateDefaultMissing(mannequin), 1));
         } else {
-            heldAnvil.setAmount(heldAnvil.getAmount() - 1);
             mannequin.setImmovable(true);
+            mannequin.setNoPhysics(true);
             EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, true);
+            MannequinHelper.setAnchorState(mannequin, MannequinHelper.itemStackToAnchorState(heldAnvil));
+            heldAnvil.setAmount(heldAnvil.getAmount() - 1);
         }
     }
 

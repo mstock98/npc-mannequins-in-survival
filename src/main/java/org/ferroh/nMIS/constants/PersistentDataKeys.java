@@ -19,6 +19,6 @@ public class PersistentDataKeys {
     public static final NamespacedKey MANNEQUIN_STATIC_TEXTURE = new NamespacedKey(NMIS.getPlugin(), "mannequinStaticTexture");
     public static final NamespacedKey MANNEQUIN_ENTITY_HAS_HEALTH_BUFF = new NamespacedKey(NMIS.getPlugin(), "mannequinEntityHasHealthBuff");
     public static final NamespacedKey MANNEQUIN_ENTITY_IS_ANCHORED = new NamespacedKey(NMIS.getPlugin(), "mannequinEntityIsAnchored");
-    public static final NamespacedKey MANNEQUIN_ENTITY_ANCHOR_STATE = new NamespacedKey(NMIS.getPlugin(), "mannequinEntityAnchorState");
+    public static final NamespacedKey MANNEQUIN_ANCHOR_STATE = new NamespacedKey(NMIS.getPlugin(), "mannequinAnchorState");
     public static final NamespacedKey MANNEQUIN_ENTITY_DISPLAY_NAME = new NamespacedKey(NMIS.getPlugin(), "mannequinEntityDisplayName");
 }
