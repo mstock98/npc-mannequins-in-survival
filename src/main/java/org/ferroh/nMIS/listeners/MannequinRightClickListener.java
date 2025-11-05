@@ -1,6 +1,7 @@
 package org.ferroh.nMIS.listeners;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Pose;
@@ -103,15 +104,16 @@ public class MannequinRightClickListener implements Listener {
      * @param heldAnvil The anvil that was held in the player's hand
      */
     private void handleAnchorToggle(PlayerInteractEntityEvent e, Mannequin mannequin, ItemStack heldAnvil) {
-        if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED)) {
+        if (MannequinHelper.getAnchorStateDefaultMissing(mannequin) != MannequinHelper.AnchorState.MISSING) {
             mannequin.setImmovable(false);
             mannequin.setNoPhysics(false);
-            EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, false);
+            e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.3f, 0.6f);
             ItemHelper.addToInventoryOrDropOnGround(e.getPlayer(), MannequinHelper.anchorStateToItemStack(MannequinHelper.getAnchorStateDefaultMissing(mannequin), 1));
+            MannequinHelper.setAnchorState(mannequin, MannequinHelper.AnchorState.MISSING);
         } else {
             mannequin.setImmovable(true);
             mannequin.setNoPhysics(true);
-            EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, true);
+            e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.3f, 1.2f);
             MannequinHelper.setAnchorState(mannequin, MannequinHelper.itemStackToAnchorState(heldAnvil));
             heldAnvil.setAmount(heldAnvil.getAmount() - 1);
         }

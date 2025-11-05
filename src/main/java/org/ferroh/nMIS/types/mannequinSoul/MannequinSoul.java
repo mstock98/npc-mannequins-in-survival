@@ -169,11 +169,9 @@ public class MannequinSoul {
             _healthBuff = new HealthBuff();
         }
 
-        if (EntityHelper.getPersistentBooleanDataDefaultFalse(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED)) {
-            // try-catch for when ItemStack for Anchor constructor is null because mannequin anchor state is missing
-            try {
-                _anchor = new Anchor(MannequinHelper.anchorStateToItemStack(MannequinHelper.getAnchorStateDefaultMissing(mannequin), 1));
-            } catch (IllegalArgumentException ignored) {}
+        MannequinHelper.AnchorState anchorState = MannequinHelper.getAnchorStateDefaultMissing(mannequin);
+        if (anchorState != MannequinHelper.AnchorState.MISSING) {
+            _anchor = new Anchor(MannequinHelper.anchorStateToItemStack(anchorState, 1));
         }
 
         String displayName = EntityHelper.getPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME);
@@ -346,7 +344,6 @@ public class MannequinSoul {
         }
 
         if (isAnchored()) {
-            EntityHelper.setPersistentBooleanData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_IS_ANCHORED, isAnchored());
             MannequinHelper.setAnchorState(mannequin, MannequinHelper.itemStackToAnchorState(_anchor.toItemStack()));
         }
 
