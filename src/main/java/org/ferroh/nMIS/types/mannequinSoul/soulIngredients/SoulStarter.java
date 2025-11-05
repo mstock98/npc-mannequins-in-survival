@@ -50,7 +50,7 @@ public class SoulStarter extends SoulIngredient {
             throw new IllegalArgumentException("Could not get item meta");
         }
 
-        if (!meta.hasDisplayName() || !meta.getDisplayName().equalsIgnoreCase(Strings.SOUL_STARTER_NAME)) {
+        if (!meta.hasDisplayName() || (!meta.getDisplayName().equalsIgnoreCase(Strings.SOUL_STARTER_NAME) && !meta.getDisplayName().equalsIgnoreCase(Strings.SOUL_STARTER_ALIAS))) {
             throw new IllegalArgumentException("Item doesn't have the right name. Expected: " + Strings.SOUL_STARTER_NAME + " Actual: " + meta.getDisplayName());
         }
 

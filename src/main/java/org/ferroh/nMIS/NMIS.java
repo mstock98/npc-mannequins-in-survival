@@ -64,7 +64,11 @@ public final class NMIS extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         if (!validateMinecraftVersion()) {
-            throw new IllegalStateException("This plugin is for Minecraft Java 1.21.9 or greater. Disabling...");
+            throw new IllegalStateException("This plugin is for Minecraft Java " +
+                    _EARLIEST_MAJOR_VERSION + "." +
+                    _EARLIEST_MINOR_VERSION + "." +
+                    _EARLIEST_PATCH_VERSION +
+                    " or greater. Disabling...");
         }
 
         _plugin = this;

@@ -72,7 +72,6 @@ public class MannequinRightClickListener implements Listener {
         gui.display(e.getPlayer());
     }
 
-    // TODO: Add isOpen safeguard?
     /**
      * Cycle to the next pose for the given mannequin
      * @param mannequin Mannequin that will have its pose changed
@@ -81,7 +80,6 @@ public class MannequinRightClickListener implements Listener {
         mannequin.setPose(getNextPose(mannequin.getPose()));
     }
 
-    // TODO: Add isOpen safeguard?
     /**
      * Change the display name of a mannequin based on a name tag
      * @param mannequin Mannequin that will have its display name changed
@@ -93,9 +91,6 @@ public class MannequinRightClickListener implements Listener {
         EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, nameTagName);
         nameTag.setAmount(nameTag.getAmount() - 1);
     }
-
-    // TODO: Add isOpen safeguard?
-    // TODO: Add sounds
 
     /**
      * Toggle the "Anchored" status for a mannequin
