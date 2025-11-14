@@ -303,11 +303,12 @@ public class MannequinSoul {
     /**
      * Spawn a mannequin entity from this mannequin soul
      * @param location Location to spawn mannequin at
-     * @param yaw Yau that the mannequin should have
-     * @param pitch Pitch that the mannequin should have
+     * @param headYaw Head yaw that the mannequin should have
+     * @param headPitch Head pitch that the mannequin should have
+     * @param bodyYaw Body yaw that the mannequin should have
      * @return Spawned mannequin entity
      */
-    public Entity spawn(Location location, float yaw, float pitch) {
+    public Entity spawn(Location location, float headYaw, float headPitch, float bodyYaw) {
         if (location == null || location.getWorld() == null) {
             return null;
         }
@@ -316,7 +317,8 @@ public class MannequinSoul {
 
         Mannequin mannequin = (Mannequin) location.getWorld().spawnEntity(location, EntityType.MANNEQUIN);
 
-        mannequin.setRotation(yaw, pitch);
+        mannequin.setBodyYaw(bodyYaw);
+        mannequin.setRotation(headYaw, headPitch);
 
         if (isAnchored()) {
             mannequin.setImmovable(true);
