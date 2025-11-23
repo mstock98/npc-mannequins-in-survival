@@ -313,8 +313,6 @@ public class MannequinSoul {
             return null;
         }
 
-        location = new Location(location.getWorld(), location.getX(), location.getY() + 1.0, location.getZ());
-
         Mannequin mannequin = (Mannequin) location.getWorld().spawnEntity(location, EntityType.MANNEQUIN);
 
         mannequin.setBodyYaw(bodyYaw);
