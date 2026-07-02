@@ -1,0 +1,15 @@
+# Config file for the NPC Mannequins in Survival Plugin (NMIS)
+# Compatible with plugin version(s): v1.1.0
+config-revision: 1 # DO NOT CHANGE
+
+# Opt-out for anonymous metric collection (server country, system architecture/OS, number of player & servers using NMIS, etc.)
+# Leaving this 'false' is a free way of saying thank you for the time that I've put into this plugin.
+# Seeing certain stats about how folks are using this plugin is incredibly useful and knowing that people actually use this keeps me motivated to keep maintaining NMIS.
+# You can view the anonymous metrics here: https://bstats.org/plugin/bukkit/NPC%20Mannequins%20in%20Survival/27362
+bstats-opt-out: false
+
+# Should the "NPC" tag be displayed under NMIS mannequins?
+# Setting this to 'true' will cause a nameplate to always display above NMIS mannequins (using the Skin username as the main name until a nametag is used).
+# Setting this to 'false' will hide all portions of the nameplate until hovered close by with the cross-hair or named with a name tag. When named, the NPC tag will still be hidden.
+# NOTE: Changing this option will not retroactively apply to existing NMIS mannequins.
+display-npc-tag: true

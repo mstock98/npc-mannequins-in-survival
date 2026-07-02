@@ -12,6 +12,7 @@ import org.bukkit.entity.Mannequin;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.constants.PersistentDataKeys;
 import org.ferroh.nMIS.constants.Strings;
+import org.ferroh.nMIS.helpers.ConfigHelper;
 import org.ferroh.nMIS.helpers.EntityHelper;
 import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.helpers.MannequinHelper;
@@ -204,7 +205,9 @@ public class MannequinSoul {
             ItemHelper.setPersistentIntegerData(itemStack, PersistentDataKeys.MANNEQUIN_ANCHOR_STATE, MannequinHelper.itemStackToAnchorState(_anchor.toItemStack()).ordinal());
         }
 
-        ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, getDisplayName());
+        if (hasCustomDisplayName()) {
+            ItemHelper.setPersistentStringData(itemStack, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, getDisplayName());
+        }
 
         // Set display info
         ItemHelper.setDisplayName(itemStack, Strings.SOUL_NAME);
@@ -254,7 +257,7 @@ public class MannequinSoul {
      * @return Mannequin display name
      */
     public String getDisplayName() {
-        if (_displayName != null && !_displayName.isEmpty()) {
+        if (hasCustomDisplayName()) {
             return _displayName;
         }
 
@@ -263,6 +266,14 @@ public class MannequinSoul {
         }
 
         return Strings.DEFAULT_MANNEQUIN_DISPLAY_NAME;
+    }
+
+    /**
+     * Whether this mannequin soul has a custom display name via vanilla name tag functionality
+     * @return True if this mannequin soul has a custom display name
+     */
+    public boolean hasCustomDisplayName() {
+        return _displayName != null && !_displayName.isEmpty();
     }
 
     /**
@@ -327,7 +338,12 @@ public class MannequinSoul {
         EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_STATIC_TEXTURE, getSkin().getStaticTexture());
 
         mannequin.setCustomName(getDisplayName());
-        mannequin.setCustomNameVisible(true);
+
+        mannequin.setCustomNameVisible(ConfigHelper.displayNPCTag() || hasCustomDisplayName());
+
+        if (!ConfigHelper.displayNPCTag()) {
+            mannequin.setDescription(null);
+        }
 
         if (hasHealthBuff()) {
             AttributeInstance maxHealthAttribute = mannequin.getAttribute(Attribute.MAX_HEALTH);
@@ -351,7 +367,9 @@ public class MannequinSoul {
             MannequinHelper.setAnchorState(mannequin, MannequinHelper.itemStackToAnchorState(_anchor.toItemStack()));
         }
 
-        EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, getDisplayName());
+        if (hasCustomDisplayName()) {
+            EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, getDisplayName());
+        }
 
         return mannequin;
     }

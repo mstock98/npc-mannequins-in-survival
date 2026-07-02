@@ -10,6 +10,7 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.ferroh.nMIS.constants.RecipeKeys;
+import org.ferroh.nMIS.helpers.ConfigHelper;
 import org.ferroh.nMIS.listeners.*;
 import org.ferroh.nMIS.types.CommandState;
 import org.ferroh.nMIS.types.gui.listeners.MannequinEquipCloseListener;
@@ -73,9 +74,12 @@ public final class NMIS extends JavaPlugin {
 
         _plugin = this;
 
-        new Metrics(getPlugin(), BSTATS_PLUGIN_ID);
-
         initSoulRecipe();
+        ConfigHelper.init();
+
+        if (ConfigHelper.isbStatsEnabled()) {
+            new Metrics(getPlugin(), BSTATS_PLUGIN_ID);
+        }
 
         _commandStateMap = new HashMap<>();
         _openMannequins = new HashMap<>();

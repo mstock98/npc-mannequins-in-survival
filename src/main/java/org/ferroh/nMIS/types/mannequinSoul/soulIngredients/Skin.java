@@ -163,7 +163,7 @@ public class Skin extends SoulIngredient {
 
         String staticTexture = getStaticTexture();
 
-        PlayerProfile staticProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(getStaticTexture().getBytes()), null);
+        PlayerProfile staticProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(getStaticTexture().getBytes()), "");
         staticProfile.setProperty(new ProfileProperty("textures", staticTexture));
 
         _staticProfile = staticProfile; // Cache for later use

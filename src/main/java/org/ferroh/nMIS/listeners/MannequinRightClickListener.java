@@ -92,6 +92,7 @@ public class MannequinRightClickListener implements Listener {
     private void handleNameTagRename(Mannequin mannequin, ItemStack nameTag) {
         String nameTagName = ItemHelper.getDisplayName(nameTag);
         mannequin.setCustomName(nameTagName);
+        mannequin.setCustomNameVisible(true);
         EntityHelper.setPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_ENTITY_DISPLAY_NAME, nameTagName);
         nameTag.setAmount(nameTag.getAmount() - 1);
     }
