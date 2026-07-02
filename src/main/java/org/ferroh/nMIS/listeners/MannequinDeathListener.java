@@ -9,6 +9,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.ferroh.nMIS.NMIS;
+import org.ferroh.nMIS.helpers.EntityHelper;
 import org.ferroh.nMIS.helpers.ItemHelper;
 import org.ferroh.nMIS.types.mannequinSoul.MannequinSoul;
 
@@ -23,6 +24,10 @@ public class MannequinDeathListener implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         if (!(e.getEntity() instanceof Mannequin mannequin)) {
+            return;
+        }
+
+        if (!EntityHelper.isNMISMannequin(mannequin)) {
             return;
         }
 

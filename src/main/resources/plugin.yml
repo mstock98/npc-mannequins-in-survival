@@ -1,5 +1,5 @@
 name: NMIS
-version: '1.0.3'
+version: '1.0.4'
 main: org.ferroh.nMIS.NMIS
 api-version: '1.21'
 prefix: NMIS

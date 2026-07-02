@@ -2,8 +2,10 @@ package org.ferroh.nMIS.helpers;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.ferroh.nMIS.constants.PersistentDataKeys;
 
 /**
  * Class containing some static helper methods for operating on Entity objects
@@ -117,5 +119,18 @@ public class EntityHelper {
         }
 
         entity.getPersistentDataContainer().set(key, PersistentDataType.BOOLEAN, data);
+    }
+
+    /**
+     * Determine if an entity is an NMIS mannequin
+     * @param entity Entity to test for membership
+     * @return True if entity is an NMIS mannequin
+     */
+    public static boolean isNMISMannequin(Entity entity) {
+        if (!(entity instanceof Mannequin mannequin)) {
+            return false;
+        }
+
+        return getPersistentStringData(mannequin, PersistentDataKeys.MANNEQUIN_STATIC_TEXTURE) != null;
     }
 }

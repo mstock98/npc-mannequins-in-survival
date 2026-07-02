@@ -38,6 +38,10 @@ public class MannequinRightClickListener implements Listener {
             return;
         }
 
+        if (!EntityHelper.isNMISMannequin(mannequin)) {
+            return;
+        }
+
         ItemStack heldItem = e.getPlayer().getInventory().getItemInMainHand();
 
         if (heldItem.getType().equals(Material.FEATHER)) {
